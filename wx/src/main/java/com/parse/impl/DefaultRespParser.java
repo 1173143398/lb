@@ -20,7 +20,7 @@ public class DefaultRespParser implements RespParser {
 		if(parser == null) {
 			throw new WxException("响应报文转Bean解析器不存在");
 		}
-		return parser.respParse(message, requiredType);
+		return parser.beanToMessage(message, requiredType);
 	}
 
 }

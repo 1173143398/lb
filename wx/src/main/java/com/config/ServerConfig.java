@@ -4,7 +4,11 @@ public class ServerConfig {
 
 	private String msgType;
 	private String eventType;
-	private String configId;
+	private String reqClass;
+	private String reqMsgType;
+	private String respClass;
+	private String respMsgType;
+	private String serviceBean;
 	
 	public String getMsgType() {
 		return msgType;
@@ -18,12 +22,37 @@ public class ServerConfig {
 	public void setEventType(String eventType) {
 		this.eventType = eventType;
 	}
-	public String getConfigId() {
-		return configId;
+	public String getReqClass() {
+		return reqClass;
 	}
-	public void setConfigId(String configId) {
-		this.configId = configId;
+	public void setReqClass(String reqClass) {
+		this.reqClass = reqClass;
 	}
+	public String getReqMsgType() {
+		return reqMsgType;
+	}
+	public void setReqMsgType(String reqMsgType) {
+		this.reqMsgType = reqMsgType;
+	}
+	public String getRespClass() {
+		return respClass;
+	}
+	public void setRespClass(String respClass) {
+		this.respClass = respClass;
+	}
+	public String getRespMsgType() {
+		return respMsgType;
+	}
+	public void setRespMsgType(String respMsgType) {
+		this.respMsgType = respMsgType;
+	}
+	public String getServiceBean() {
+		return serviceBean;
+	}
+	public void setServiceBean(String serviceBean) {
+		this.serviceBean = serviceBean;
+	}
+	
 	
 	
 }

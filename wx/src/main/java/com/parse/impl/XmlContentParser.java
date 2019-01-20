@@ -15,13 +15,13 @@ public class XmlContentParser implements ContentParser,InitializingBean{
 	private ParserManager parserManager;
 	
 	@Override
-	public IMessage reqParse(String message, Class<? extends IMessage> parseType) {
+	public IMessage messageToBean(String message, Class<? extends IMessage> parseType) {
 		 IMessage xmlToBean = XmlUtil.xmlToBean(message, parseType);
 		 return xmlToBean;
 	}
 
 	@Override
-	public String respParse(IMessage message, Class<? extends IMessage> parseType) {
+	public String beanToMessage(IMessage message, Class<? extends IMessage> parseType) {
 		// TODO Auto-generated method stub
 		return XmlUtil.beantoXml(message,parseType);
 	}

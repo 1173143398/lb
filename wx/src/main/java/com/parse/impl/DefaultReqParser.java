@@ -20,7 +20,7 @@ public class DefaultReqParser implements ReqParser {
 		if(parser == null) {
 			throw new WxException("请求报文转Bean解析器不存在");
 		}
-		return parser.reqParse(message, parseType);
+		return parser.messageToBean(message, parseType);
 	}
 
 }

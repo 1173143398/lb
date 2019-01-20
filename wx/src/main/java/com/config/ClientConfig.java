@@ -4,10 +4,14 @@ public class ClientConfig {
 
 	private String funcNo;
 	private String funcDesc;
-	private String reqRespType;
 	private String shcema;
 	private String url;
-	private String configId;
+	private String method;
+	private String reqClass;
+	private String reqMsgType;
+	private String respClass;
+	private String respMsgType;
+	private String serviceBean;
 	
 	public String getFuncNo() {
 		return funcNo;
@@ -21,12 +25,7 @@ public class ClientConfig {
 	public void setFuncDesc(String funcDesc) {
 		this.funcDesc = funcDesc;
 	}
-	public String getReqRespType() {
-		return reqRespType;
-	}
-	public void setReqRespType(String reqRespType) {
-		this.reqRespType = reqRespType;
-	}
+	
 	public String getShcema() {
 		return shcema;
 	}
@@ -39,11 +38,43 @@ public class ClientConfig {
 	public void setUrl(String url) {
 		this.url = url;
 	}
-	public String getConfigId() {
-		return configId;
+	
+	public String getMethod() {
+		return method;
 	}
-	public void setConfigId(String configId) {
-		this.configId = configId;
+	public void setMethod(String method) {
+		this.method = method;
 	}
+	public String getReqClass() {
+		return reqClass;
+	}
+	public void setReqClass(String reqClass) {
+		this.reqClass = reqClass;
+	}
+	public String getReqMsgType() {
+		return reqMsgType;
+	}
+	public void setReqMsgType(String reqMsgType) {
+		this.reqMsgType = reqMsgType;
+	}
+	public String getRespClass() {
+		return respClass;
+	}
+	public void setRespClass(String respClass) {
+		this.respClass = respClass;
+	}
+	public String getRespMsgType() {
+		return respMsgType;
+	}
+	public void setRespMsgType(String respMsgType) {
+		this.respMsgType = respMsgType;
+	}
+	public String getServiceBean() {
+		return serviceBean;
+	}
+	public void setServiceBean(String serviceBean) {
+		this.serviceBean = serviceBean;
+	}
+	
 	
 }

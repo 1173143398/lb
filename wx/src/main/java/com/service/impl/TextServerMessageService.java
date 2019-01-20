@@ -2,17 +2,18 @@ package com.service.impl;
 
 import org.springframework.stereotype.Service;
 
+import com.config.ServerConfig;
 import com.execpt.WxException;
 import com.message.IMessage;
 import com.message.TextInMessage;
 import com.message.TextOutMessage;
-import com.service.MessageService;
+import com.service.ServerMessageService;
 
 @Service("textMessageService")
-public class TextMessageService implements MessageService{
+public class TextServerMessageService implements ServerMessageService{
 
 	@Override
-	public IMessage doService(IMessage message, Class<? extends IMessage> requiredType) {
+	public IMessage doService(ServerConfig serverConfig,IMessage message, Class<? extends IMessage> requiredType) {
 		if(TextInMessage.class.equals(requiredType) == false || !(message instanceof TextInMessage)) {
 			throw new WxException("处理的消息类型非TextMessage.class");
 		}

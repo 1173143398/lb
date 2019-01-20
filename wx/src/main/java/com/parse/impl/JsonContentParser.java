@@ -16,12 +16,12 @@ public class JsonContentParser implements ContentParser,InitializingBean {
 	
 	
 	@Override
-	public IMessage reqParse(String message, Class<? extends IMessage> parseType) {
+	public IMessage messageToBean(String message, Class<? extends IMessage> parseType) {
 		return JsonUtil.jsonToBean(message, parseType);
 	}
 
 	@Override
-	public String respParse(IMessage message, Class<? extends IMessage> parseType) {
+	public String beanToMessage(IMessage message, Class<? extends IMessage> parseType) {
 		return JsonUtil.beanToJson(message, parseType);
 	}
 
