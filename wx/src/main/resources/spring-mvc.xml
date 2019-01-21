@@ -3,13 +3,19 @@
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:mvc="http://www.springframework.org/schema/mvc"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
 	xsi:schemaLocation="
 http://www.springframework.org/schema/beans
 http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
 http://www.springframework.org/schema/context
 http://www.springframework.org/schema/context/spring-context-4.1.xsd
 http://www.springframework.org/schema/mvc
-http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd">
+http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd
+http://www.springframework.org/schema/aop 
+http://www.springframework.org/schema/aop/spring-aop-4.1.xsd
+http://www.springframework.org/schema/tx 
+http://www.springframework.org/schema/tx/spring-tx-4.1.xsd">
 
 	<!--启动基于注解的配置 -->
 	<mvc:annotation-driven />
@@ -46,34 +52,20 @@ http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd">
 		<property name="dataSource" ref="dataSource"></property>
 	</bean>
 	
-	<bean id="connManager" class="com.http.WxPoolingHttpClientConnectionManager" destroy-method="close">
-		<property name="maxTotal" value="${http.pool.maxTotal}"></property>
-		<property name="defaultMaxPerRoute" value="${http.pool.defaultMaxPerRoute}"></property>
-	</bean>
-	
-	<bean id="requestConfigBuilder" class="org.apache.http.client.config.RequestConfig" factory-method="custom">
-		<!-- 从连接池中获取到连接的最长时间 -->
-		<property name="connectionRequestTimeout" value="${http.request.connectionRequestTimeout}"/>
-		<!-- 创建连接的最长时间 -->
-		<property name="connectTimeout" value="${http.request.connectTimeout}"/>
-		<!-- 数据传输的最长时间 -->
-		<property name="socketTimeout" value="${http.request.socketTimeout}"/>
-		<!-- 提交请求前测试连接是否可用 -->
-		<property name="staleConnectionCheckEnabled" value="${http.request.staleConnectionCheckEnabled}"/>
-	</bean>
-	
-	<bean id="requestConfig" factory-bean="requestConfigBuilder" factory-method="build"></bean>
-	
-	<bean id="httpClientBuilder" class="org.apache.http.impl.client.HttpClientBuilder" factory-method="create">
-		<property name="connectionManager" ref="connManager"></property>
-		<property name="defaultRequestConfig" ref="requestConfig"></property>
-	</bean>
-	<bean id="closeableHttpClient" factory-bean="httpClientBuilder" factory-method="build"></bean>
-	<!-- 
-	<bean class="com.http.ThreadService" destroy-method="close">
-		<property name="connManager" ref="connManager"></property>
-	</bean>
-	 -->
+	 <!-- 配置事务管理器 -->
+     <bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager" id="transactionManager">
+         <property name="dataSource" ref="dataSource"></property>
+     </bean>
+     <tx:advice id="advice"     transaction-manager="transactionManager">
+         <tx:attributes>
+             <tx:method name="*" propagation="REQUIRED"/><!-- *是对所有方法都加 -->
+         </tx:attributes>
+     </tx:advice>
+     <!-- 用切点把事务切进去 -->
+     <aop:config>
+         <aop:pointcut expression="execution(* com.itnba.maya.daoimp..*.*(..))" id="pointcut"/>
+         <aop:advisor advice-ref="advice" pointcut-ref="pointcut"/>
+     </aop:config>
 	 
 	 <bean class="com.execpt.WxHandlerExceptionResolver"></bean>
 </beans>

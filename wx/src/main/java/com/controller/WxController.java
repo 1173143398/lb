@@ -33,6 +33,7 @@ import com.service.ClientMessageService;
 import com.service.ServerConfigService;
 import com.service.ServerMessageService;
 import com.util.ClassUtil;
+import com.util.Constants;
 import com.util.StringUtil;
 
 @Controller
@@ -106,11 +107,33 @@ public class WxController {
 	
 	@RequestMapping("/send")
 	@ResponseBody
-	public String send(HttpServletRequest request,@RequestBody(required = false) String message,@RequestParam("funcno") String funcNo) {
+	public String send(@RequestBody(required = false) String message,@RequestParam("funcno") String funcNo) {
 		alert(funcNo,"功能号不能为空");
 		//获取配置
 		ClientConfig clientConfig = clientConfigService.getClientConfig(funcNo);
 		alert(clientConfig,"获取配置失败,功能号:" + funcNo);
+		
+		NetWorkClient client = netWorkManager.getClient(clientConfig.getShcema(), clientConfig.getMethod());
+		alert(client,"网络访问类缺失");
+		
+		ClientMessageService messageService = TransactionContext.getBean(clientConfig.getServiceBean(), ClientMessageService.class);
+		alert(messageService,"请求报文处理类缺失");
+		
+		IContentParser respParser = parserManager.getParser(clientConfig.getRespMsgType());
+		alert(respParser,"响应报文解析类缺失");
+		
+		Class<? extends IMessage> respClass = ClassUtil.getClass(clientConfig.getRespClass(), IMessage.class);
+		alert(respClass,"响应报文类应为:IMesssage.class");
+		//GET方式处理 
+		if(Constants.GET.equals(clientConfig.getMethod())) {
+			String url = formatUrl(clientConfig.getUrl());
+			log.info("发送URL:" + url);
+			String rs = client.send(url, "");
+			IMessage rsMsg = respParser.messageToBean(rs, respClass);
+			IMessage afterSend = messageService.afterSend(clientConfig, rsMsg, respClass);
+			String rMesssage = respParser.beanToMessage(afterSend, respClass);
+			return rMesssage;
+		}
 		//解析请求报文
 		IContentParser reqParser = parserManager.getParser(clientConfig.getReqMsgType());
 		alert(reqParser,"请求报文解析类缺失");
@@ -118,43 +141,21 @@ public class WxController {
 		Class<? extends IMessage> reqClass = ClassUtil.getClass(clientConfig.getReqClass(), IMessage.class);
 		alert(reqClass,"请求报文类型应为:IMesssage.class");
 		
-		ClientMessageService messageService = TransactionContext.getBean(clientConfig.getServiceBean(), ClientMessageService.class);
-		alert(messageService,"请求报文处理类缺失");
 		
-		NetWorkClient client = netWorkManager.getClient(clientConfig.getShcema(), clientConfig.getMethod());
-		alert(client,"网络访问类缺失");
-		
-		IContentParser respParser = parserManager.getParser(clientConfig.getRespMsgType());
-		alert(respParser,"响应报文解析类缺失");
-		
-		Class<? extends IMessage> respClass = ClassUtil.getClass(clientConfig.getRespClass(), IMessage.class);
-		alert(respClass,"响应报文类应为:IMesssage.class");
-		
-		IContentParser reqWxParser = parserManager.getParser(clientConfig.getReqWxMsgType());
-		alert(reqWxParser,"wx请求报文解析类缺失");
-		
-		Class<? extends IMessage> reqWxClass = ClassUtil.getClass(clientConfig.getReqWxClass(), IMessage.class);
-		alert(reqWxClass,"wx请求报文类应为:IMesssage.class");
-		
-		IContentParser respWxParser = parserManager.getParser(clientConfig.getRespWxMsgType());
-		alert(respWxParser,"wx响应报文解析类缺失");
-		
-		Class<? extends IMessage> respWxClass = ClassUtil.getClass(clientConfig.getRespWxClass(), IMessage.class);
-		alert(respWxClass,"wx响应报文类应为:IMesssage.class");
 		
 		//解析请求报文
 		IMessage parseMsg = reqParser.messageToBean(message, reqClass);
 		//访问wx前
-		IMessage beforeSend = messageService.beforeSend(clientConfig, parseMsg, reqClass);
+		IMessage sendMsg = messageService.beforeSend(clientConfig, parseMsg, reqClass);
 		//访问wx
-		String sendMsg = reqWxParser.beanToMessage(beforeSend, reqWxClass);
 		String url = formatUrl(clientConfig.getUrl());
 		log.info("发送URL:" + url);
-		String rs = client.send(url, sendMsg);
+		String msg = reqParser.beanToMessage(sendMsg, reqClass);
+		String rs = client.send(url, msg);
 		//返回响应报文 
-		IMessage messageToBean = respWxParser.messageToBean(rs, respWxClass);
+		IMessage rsMsg = respParser.messageToBean(rs, respClass);
 		//访问wx后
-		IMessage afterSend = messageService.afterSend(clientConfig, messageToBean, respWxClass);
+		IMessage afterSend = messageService.afterSend(clientConfig, rsMsg, respClass);
 		String rMesssage = respParser.beanToMessage(afterSend, respClass);
 		return rMesssage;
 	}

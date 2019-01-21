@@ -9,12 +9,8 @@ public class ClientConfig {
 	private String method;
 	private String reqClass;
 	private String reqMsgType;
-	private String reqWxClass;
-	private String reqWxMsgType;
 	private String respClass;
 	private String respMsgType;
-	private String respWxClass;
-	private String respWxMsgType;
 	private String serviceBean;
 	
 	public String getFuncNo() {
@@ -79,28 +75,5 @@ public class ClientConfig {
 	public void setServiceBean(String serviceBean) {
 		this.serviceBean = serviceBean;
 	}
-	public String getReqWxClass() {
-		return reqWxClass;
-	}
-	public void setReqWxClass(String reqWxClass) {
-		this.reqWxClass = reqWxClass;
-	}
-	public String getReqWxMsgType() {
-		return reqWxMsgType;
-	}
-	public void setReqWxMsgType(String reqWxMsgType) {
-		this.reqWxMsgType = reqWxMsgType;
-	}
-	public String getRespWxClass() {
-		return respWxClass;
-	}
-	public void setRespWxClass(String respWxClass) {
-		this.respWxClass = respWxClass;
-	}
-	public String getRespWxMsgType() {
-		return respWxMsgType;
-	}
-	public void setRespWxMsgType(String respWxMsgType) {
-		this.respWxMsgType = respWxMsgType;
-	}
+	
 }
