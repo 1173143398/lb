@@ -5,11 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.message.IMessage;
-import com.parse.ContentParser;
+import com.parse.IContentParser;
 import com.util.JsonUtil;
 
 @Service
-public class JsonContentParser implements ContentParser,InitializingBean {
+public class JsonContentParser implements IContentParser,InitializingBean {
 
 	@Autowired
 	private ParserManager parserManager;

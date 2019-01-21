@@ -2,7 +2,7 @@ package com.parse;
 
 import com.message.IMessage;
 
-public interface ContentParser {
+public interface IContentParser {
 	
 	IMessage messageToBean(String message,Class<? extends IMessage> parseType);
 	

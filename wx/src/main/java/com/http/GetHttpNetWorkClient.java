@@ -1,10 +1,10 @@
 package com.http;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.http.client.ClientProtocolException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -13,9 +13,13 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.execpt.WxException;
+
 @Service
 public class GetHttpNetWorkClient implements NetWorkClient,InitializingBean {
 
+	private Log log = LogFactory.getLog(GetHttpNetWorkClient.class);
+	
 	@Autowired
 	private CloseableHttpClient closeableHttpClient;
 	
@@ -28,12 +32,10 @@ public class GetHttpNetWorkClient implements NetWorkClient,InitializingBean {
 			HttpGet get = new HttpGet(url);
 			CloseableHttpResponse execute = closeableHttpClient.execute(get);
 			return EntityUtils.toString(execute.getEntity());
-		} catch (ClientProtocolException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			log.error("GetHttpNetWorkClient通信异常",e);
+			throw new WxException("通信异常");
 		}
-		return null;
 	}
 
 	@Override

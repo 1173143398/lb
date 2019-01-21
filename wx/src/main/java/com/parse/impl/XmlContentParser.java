@@ -5,11 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.message.IMessage;
-import com.parse.ContentParser;
+import com.parse.IContentParser;
 import com.util.XmlUtil;
 
 @Service
-public class XmlContentParser implements ContentParser,InitializingBean{
+public class XmlContentParser implements IContentParser,InitializingBean{
 
 	@Autowired
 	private ParserManager parserManager;

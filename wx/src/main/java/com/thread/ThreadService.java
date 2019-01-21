@@ -1,4 +1,4 @@
-package com.http;
+package com.thread;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

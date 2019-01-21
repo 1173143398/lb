@@ -1,31 +1,37 @@
-package com.message;
+package com.message.server;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
-@XStreamAlias("xml")
-public class EventMessage implements IMessage {
+import com.message.IMessage;
 
-	@XStreamAlias("Event")
-	private String eventType;
-	
-	@XStreamAlias("ToUserName")
+@XmlRootElement(name = "xml")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class TextOutMessage implements IMessage {
+
+	@XmlElement(name = "ToUserName")
 	private String toUserName;
 	
-	@XStreamAlias("FromUserName")
+	@XmlElement(name = "FromUserName")
 	private String fromUserName;
 	
-	@XStreamAlias("CreateTime")
+	@XmlElement(name ="CreateTime")
 	private String createTime;
 	
-	@XStreamAlias("MsgType")
+	@XmlElement(name = "MsgType")
 	private String msgType;
 	
-	public String getEventType() {
-		return eventType;
+	@XmlElement(name = "Content")
+	private String content;
+
+	public String getContent() {
+		return content;
 	}
 
-	public void setEventType(String eventType) {
-		this.eventType = eventType;
+	public void setContent(String content) {
+		this.content = content;
 	}
 	public String getToUserName() {
 		return toUserName;
@@ -54,5 +60,4 @@ public class EventMessage implements IMessage {
 	public void setMsgType(String msgType) {
 		this.msgType = msgType;
 	}
-	
 }

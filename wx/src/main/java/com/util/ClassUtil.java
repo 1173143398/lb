@@ -1,8 +1,15 @@
 package com.util;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import com.execpt.WxException;
 import com.message.IMessage;
 
 public class ClassUtil {
+	
+	private static Log log = LogFactory.getLog(ClassUtil.class);
+	
 	public static Class<? extends IMessage> getClass(String className, Class<? extends IMessage> requiedType) {
 		try {
 			Class<?> forName = Class.forName(className);
@@ -11,7 +18,8 @@ public class ClassUtil {
 				return asSubclass;
 			}
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			log.error("加载类型异常",e);
+			throw new WxException("加载类型异常");
 		}
 		return null;
 	}

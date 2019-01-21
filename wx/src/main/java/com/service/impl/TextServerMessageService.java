@@ -5,11 +5,11 @@ import org.springframework.stereotype.Service;
 import com.config.ServerConfig;
 import com.execpt.WxException;
 import com.message.IMessage;
-import com.message.TextInMessage;
-import com.message.TextOutMessage;
+import com.message.server.TextInMessage;
+import com.message.server.TextOutMessage;
 import com.service.ServerMessageService;
 
-@Service("textMessageService")
+@Service("textServerMessageService")
 public class TextServerMessageService implements ServerMessageService{
 
 	@Override

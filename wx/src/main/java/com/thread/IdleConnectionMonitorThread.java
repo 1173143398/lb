@@ -1,4 +1,4 @@
-package com.http;
+package com.thread;
 
 import java.util.concurrent.TimeUnit;
 
@@ -9,12 +9,11 @@ import org.apache.http.conn.HttpClientConnectionManager;
 public class IdleConnectionMonitorThread extends Thread {
     
 	private static Log log = LogFactory.getLog(IdleConnectionMonitorThread.class);
-    private final HttpClientConnectionManager connMgr;
+    private HttpClientConnectionManager connMgr;
     private volatile boolean shutdown;
     
-    public IdleConnectionMonitorThread(HttpClientConnectionManager connMgr) {
-        super();
-        this.connMgr = connMgr;
+    public IdleConnectionMonitorThread(HttpClientConnectionManager connMgr){
+    	this.connMgr = connMgr;
     }
 
     @Override
@@ -24,10 +23,7 @@ public class IdleConnectionMonitorThread extends Thread {
                 synchronized (this) {
                     Thread.sleep(5000);
                     log.info("清理无效http链接");
-                    // Close expired connections
                     connMgr.closeExpiredConnections();
-                    // Optionally, close connections
-                    // that have been idle longer than 30 sec
                     connMgr.closeIdleConnections(30, TimeUnit.SECONDS);
                 }
             }

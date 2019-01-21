@@ -1,5 +1,10 @@
 package com.controller;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,14 +19,17 @@ import com.config.ClientConfig;
 import com.config.ServerConfig;
 import com.context.TransactionContext;
 import com.execpt.WxException;
+import com.http.NetWorkClient;
 import com.http.NetWorkManager;
-import com.message.EventMessage;
 import com.message.IMessage;
-import com.message.Message;
-import com.parse.ContentParser;
+import com.message.server.EventMessage;
+import com.message.server.Message;
+import com.parse.IContentParser;
+import com.parse.IWxExpressionParser;
 import com.parse.impl.ParserManager;
 import com.security.SecurityService;
 import com.service.ClientConfigService;
+import com.service.ClientMessageService;
 import com.service.ServerConfigService;
 import com.service.ServerMessageService;
 import com.util.ClassUtil;
@@ -39,7 +47,7 @@ public class WxController {
 	@Autowired
 	private ClientConfigService clientConfigService;
 	
-	@Value("SERVER_DEFALUT_MSG_TYPE")
+	@Value("${SERVER_DEFALUT_MSG_TYPE}")
 	private String serverDefaultMsgType;
 	
 	@Autowired
@@ -47,7 +55,8 @@ public class WxController {
 	
 	@Autowired
 	private NetWorkManager netWorkManager;
-	
+	@Autowired
+	private IWxExpressionParser wxExpressionParser;
 	@RequestMapping("receive")
 	@ResponseBody
 	public String receive(@RequestBody String message) {
@@ -56,79 +65,116 @@ public class WxController {
 		String dMesssage = securityService.decrypt(message);
 		log.info("解密后报文:" + dMesssage);
 		//找出消息类型
-		Message bean = getMessage(dMesssage);
-		if(bean == null) {
-			throw new WxException("转换消息失败");
-		}
-		if(StringUtil.isNull(bean.getMsgType())) {
-			throw new WxException("获取消息类型失败");
-		}
-		String msgType = bean.getMsgType();
+		String msgType = getMessage(dMesssage);
+		alert(msgType,"获取消息类型失败");
 		String eventType = msgType;
 		log.info("消息类型:" + msgType);
+		//如果是event，再找事件类型
 		if("event".contentEquals(msgType)) {
-			//如果是event，再找事件类型
 			log.info("事件类型:" + eventType);
 			eventType = getEventType(dMesssage);
-			if(StringUtil.isNull(eventType)) {
-				throw new WxException("获取事件类型失败");
-			}
+			alert(eventType,"获取事件类型失败");
 		}
 		//匹配数据库配置
 		ServerConfig serverConfig = serverConfigService.getServerConfig(msgType, eventType);
-		if(serverConfig == null) {
-			throw new WxException("没有消息处理配置,消息类型:"+msgType+" 事件类型:"+eventType);
-		}
+		alert(serverConfig,"消息处理配置缺失");
 		//解析请求报文
-		ContentParser reqParser = parserManager.getParser(serverConfig.getReqMsgType());
-		if(reqParser == null) {
-			throw new WxException("没有请求报文解析类");
-		}
-		Class<? extends IMessage> reqClass = ClassUtil.getClass(serverConfig.getReqClass(), IMessage.class);
-		if(reqClass == null) {
-			throw new WxException("没有请求报文类,应为:IMesssage.class");
-		}
-		IMessage parseMsg = reqParser.messageToBean(message, reqClass);
-		//处理请求报文
-		ServerMessageService messageService = TransactionContext.getBean(serverConfig.getServiceBean(), ServerMessageService.class);
-		if(messageService == null) {
-			throw new WxException("没有请求报文处理类");
-		}
+		IContentParser reqParser = parserManager.getParser(serverConfig.getReqMsgType());
+		alert(reqParser,"请求报文解析类缺失");
 		
-		IMessage rsMsg = messageService.doService(serverConfig,parseMsg,reqClass);
-		ContentParser respParser = parserManager.getParser(serverConfig.getRespMsgType());
-		//返回响应报文 
-		if(respParser == null) {
-			throw new WxException("没有响应报文解析类");
-		}
+		Class<? extends IMessage> reqClass = ClassUtil.getClass(serverConfig.getReqClass(), IMessage.class);
+		alert(reqClass,"请求报文类型应为:IMesssage.class");
+		
+		ServerMessageService messageService = TransactionContext.getBean(serverConfig.getServiceBean(), ServerMessageService.class);
+		alert(messageService,"请求报文处理类缺失");
+		
+		IContentParser respParser = parserManager.getParser(serverConfig.getRespMsgType());
+		alert(respParser,"响应报文解析类缺失");
+		
 		Class<? extends IMessage> respClass = ClassUtil.getClass(serverConfig.getRespClass(), IMessage.class);
-		if(respClass == null) {
-			throw new WxException("没有响应报文类,应为:IMesssage.class");
-		}
-		String rIMesssage = respParser.beanToMessage(rsMsg, respClass);
+		alert(respClass,"响应报文类型应为:IMesssage.class");
+		//解析请求报文
+		IMessage parseMsg = reqParser.messageToBean(message, reqClass);
+		//处理
+		IMessage rsMsg = messageService.doService(serverConfig,parseMsg,reqClass);
+		//返回响应报文
+		String rMesssage = respParser.beanToMessage(rsMsg, respClass);
 		//加密报文
-		return securityService.encrypt(rIMesssage);
+		String sMessage = securityService.encrypt(rMesssage);
+		return sMessage;
 	}
 	
 	@RequestMapping("/send")
 	@ResponseBody
-	public String send(@RequestBody String message,@RequestParam("funcno") String funcNo) {
-		if(StringUtil.isNull(funcNo)) {
-			throw new WxException("功能号不能为空");
-		}
+	public String send(HttpServletRequest request,@RequestBody(required = false) String message,@RequestParam("funcno") String funcNo) {
+		alert(funcNo,"功能号不能为空");
 		//获取配置
 		ClientConfig clientConfig = clientConfigService.getClientConfig(funcNo);
-		if(clientConfig == null) {
-			throw new WxException("获取配置失败,功能号:" + funcNo);
-		}
+		alert(clientConfig,"获取配置失败,功能号:" + funcNo);
+		//解析请求报文
+		IContentParser reqParser = parserManager.getParser(clientConfig.getReqMsgType());
+		alert(reqParser,"请求报文解析类缺失");
 		
-		return message;
+		Class<? extends IMessage> reqClass = ClassUtil.getClass(clientConfig.getReqClass(), IMessage.class);
+		alert(reqClass,"请求报文类型应为:IMesssage.class");
+		
+		ClientMessageService messageService = TransactionContext.getBean(clientConfig.getServiceBean(), ClientMessageService.class);
+		alert(messageService,"请求报文处理类缺失");
+		
+		NetWorkClient client = netWorkManager.getClient(clientConfig.getShcema(), clientConfig.getMethod());
+		alert(client,"网络访问类缺失");
+		
+		IContentParser respParser = parserManager.getParser(clientConfig.getRespMsgType());
+		alert(respParser,"响应报文解析类缺失");
+		
+		Class<? extends IMessage> respClass = ClassUtil.getClass(clientConfig.getRespClass(), IMessage.class);
+		alert(respClass,"响应报文类应为:IMesssage.class");
+		
+		IContentParser reqWxParser = parserManager.getParser(clientConfig.getReqWxMsgType());
+		alert(reqWxParser,"wx请求报文解析类缺失");
+		
+		Class<? extends IMessage> reqWxClass = ClassUtil.getClass(clientConfig.getReqWxClass(), IMessage.class);
+		alert(reqWxClass,"wx请求报文类应为:IMesssage.class");
+		
+		IContentParser respWxParser = parserManager.getParser(clientConfig.getRespWxMsgType());
+		alert(respWxParser,"wx响应报文解析类缺失");
+		
+		Class<? extends IMessage> respWxClass = ClassUtil.getClass(clientConfig.getRespWxClass(), IMessage.class);
+		alert(respWxClass,"wx响应报文类应为:IMesssage.class");
+		
+		//解析请求报文
+		IMessage parseMsg = reqParser.messageToBean(message, reqClass);
+		//访问wx前
+		IMessage beforeSend = messageService.beforeSend(clientConfig, parseMsg, reqClass);
+		//访问wx
+		String sendMsg = reqWxParser.beanToMessage(beforeSend, reqWxClass);
+		String url = formatUrl(clientConfig.getUrl());
+		log.info("发送URL:" + url);
+		String rs = client.send(url, sendMsg);
+		//返回响应报文 
+		IMessage messageToBean = respWxParser.messageToBean(rs, respWxClass);
+		//访问wx后
+		IMessage afterSend = messageService.afterSend(clientConfig, messageToBean, respWxClass);
+		String rMesssage = respParser.beanToMessage(afterSend, respClass);
+		return rMesssage;
 	}
 	
 
+	private String formatUrl(String url) {
+		Pattern compile = Pattern.compile("(\\$\\{\\w+\\})");
+		Matcher matcher = compile.matcher(url);
+		while(matcher.find()){
+			String param = matcher.group();
+			String pName = param.replace("$", "").replace("{", "").replace("}", "");
+			String value = wxExpressionParser.getValue(TransactionContext.getSystemContext(), pName);
+			url.replace(param, value);
+		}
+		return url;
+	}
+
 	private String getEventType(String msg) {
 		if(StringUtil.isNull(msg) == false) {
-			ContentParser parser = parserManager.getParser(serverDefaultMsgType);
+			IContentParser parser = parserManager.getParser(serverDefaultMsgType);
 			if(parser == null) {
 				throw new WxException("没有请求报文解析类");
 			}
@@ -138,15 +184,21 @@ public class WxController {
 		return null;
 	}
 
-	private Message getMessage(String msg) {
+	private String getMessage(String msg) {
 		if(StringUtil.isNull(msg) == false) {
-			ContentParser parser = parserManager.getParser(serverDefaultMsgType);
+			IContentParser parser = parserManager.getParser(serverDefaultMsgType);
 			if(parser == null) {
 				throw new WxException("没有请求报文解析类");
 			}
 			Message xmlToBean = (Message)parser.messageToBean(msg, Message.class);
-			return xmlToBean;
+			return xmlToBean.getMsgType();
 		}
 		return null;
+	}
+	
+	private void alert(Object o,String message){
+		if(StringUtil.isNull(o)){
+			throw new WxException(message);
+		}
 	}
 }

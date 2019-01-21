@@ -1,34 +1,48 @@
-package com.message;
+package com.message.server;
 
-import com.adapter.CdataXmlAdapter;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
-@XStreamAlias("xml")
-public class TextOutMessage implements IMessage {
+import com.message.IMessage;
 
-	@XStreamAlias("ToUserName")
+@XmlRootElement(name = "xml")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class TextInMessage implements IMessage {
+
+	@XmlElement(name = "ToUserName")
 	private String toUserName;
 	
-	@XStreamAlias("FromUserName")
+	@XmlElement(name = "FromUserName")
 	private String fromUserName;
 	
-	@XStreamAlias("CreateTime")
+	@XmlElement(name = "CreateTime")
 	private String createTime;
 	
-	@XStreamAlias("MsgType")
+	@XmlElement(name = "MsgType")
 	private String msgType;
 	
-	@XStreamAlias("Content")
+	@XmlElement(name = "Content")
 	private String content;
-
+	
+	@XmlElement(name = "MsgId")
+	private String msgId;
+	
 	public String getContent() {
 		return content;
 	}
-
 	public void setContent(String content) {
 		this.content = content;
 	}
+	
+	public String getMsgId() {
+		return msgId;
+	}
+	public void setMsgId(String msgId) {
+		this.msgId = msgId;
+	}
+	
 	public String getToUserName() {
 		return toUserName;
 	}

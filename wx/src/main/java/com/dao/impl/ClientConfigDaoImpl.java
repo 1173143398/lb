@@ -19,7 +19,8 @@ public class ClientConfigDaoImpl implements ClientConfigDao{
 	
 	@Override
 	public ClientConfig getClientConfig(String funcNo) {
-		return jdbcTemplate.queryForObject("SELECT FUNC_NO,FUNC_DESC,SHCEMA,URL,METHOD,REQ_CLASS,REQ_MSG_TYPE,RESP_CLASS,RESP_MSG_TYPE,SERVICE_BEAN "
+		return jdbcTemplate.queryForObject("SELECT FUNC_NO,FUNC_DESC,SHCEMA,URL,METHOD,REQ_CLASS,REQ_MSG_TYPE,"
+				+ "REQ_WX_CLASS,REQ_WX_MSG_TYPE,RESP_CLASS,RESP_MSG_TYPE,RESP_WX_CLASS,RESP_WX_MSG_TYPE,SERVICE_BEAN "
 				+ " FROM CLILENT_CONFIG WHERE FUNC_NO = ?", new RowMapper<ClientConfig>() {
 
 			@Override
@@ -32,8 +33,12 @@ public class ClientConfigDaoImpl implements ClientConfigDao{
 				clientConfig.setUrl(rs.getString("URL"));
 				clientConfig.setReqClass(rs.getString("REQ_CLASS"));
 				clientConfig.setReqMsgType(rs.getString("REQ_MSG_TYPE"));
+				clientConfig.setReqWxClass(rs.getString("REQ_WX_CLASS"));
+				clientConfig.setReqWxMsgType(rs.getString("REQ_WX_MSG_TYPE"));
 				clientConfig.setRespClass(rs.getString("RESP_CLASS"));
 				clientConfig.setRespMsgType(rs.getString("RESP_MSG_TYPE"));
+				clientConfig.setRespWxClass(rs.getString("RESP_WX_CLASS"));
+				clientConfig.setRespWxMsgType(rs.getString("RESP_WX_MSG_TYPE"));
 				clientConfig.setServiceBean(rs.getString("SERVICE_BEAN"));
 				return clientConfig;
 			}
