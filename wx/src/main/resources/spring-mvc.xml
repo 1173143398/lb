@@ -56,15 +56,17 @@ http://www.springframework.org/schema/tx/spring-tx-4.1.xsd">
      <bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager" id="transactionManager">
          <property name="dataSource" ref="dataSource"></property>
      </bean>
-     <tx:advice id="advice"     transaction-manager="transactionManager">
+     <tx:advice id="advice" transaction-manager="transactionManager">
          <tx:attributes>
              <tx:method name="*" propagation="REQUIRED"/><!-- *是对所有方法都加 -->
          </tx:attributes>
      </tx:advice>
      <!-- 用切点把事务切进去 -->
      <aop:config>
-         <aop:pointcut expression="execution(* com.itnba.maya.daoimp..*.*(..))" id="pointcut"/>
-         <aop:advisor advice-ref="advice" pointcut-ref="pointcut"/>
+         <aop:pointcut expression="execution(* com.service.impl..*.*(..))" id="pointcut1"/>
+         <aop:pointcut expression="execution(* com.security.impl..*.*(..))" id="pointcut2"/>
+         <aop:advisor advice-ref="advice" pointcut-ref="pointcut1"/>
+         <aop:advisor advice-ref="advice" pointcut-ref="pointcut2"/>
      </aop:config>
 	 
 	 <bean class="com.execpt.WxHandlerExceptionResolver"></bean>

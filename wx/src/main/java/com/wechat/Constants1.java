@@ -1,6 +1,6 @@
 package com.wechat;
 
-public class Constants {
+public class Constants1 {
 
 	public static final String APP_ID = "wx91d49736e4bc722d";
 	

@@ -1,5 +1,7 @@
 package com.config;
 
+import java.sql.Timestamp;
+
 public class SystemConfig {
 
 	private String serverMsgType;
@@ -7,6 +9,9 @@ public class SystemConfig {
 	private String appSecret;
 	private String accessToken;
 	private String timerUpdateTokenUrl;
+	private Timestamp tms;
+	private int expiresIn;
+	
 	public String getServerMsgType() {
 		return serverMsgType;
 	}
@@ -37,6 +42,16 @@ public class SystemConfig {
 	public void setTimerUpdateTokenUrl(String timerUpdateTokenUrl) {
 		this.timerUpdateTokenUrl = timerUpdateTokenUrl;
 	}
-	
-	
+	public Timestamp getTms() {
+		return tms;
+	}
+	public void setTms(Timestamp tms) {
+		this.tms = tms;
+	}
+	public int getExpiresIn() {
+		return expiresIn;
+	}
+	public void setExpiresIn(int expiresIn) {
+		this.expiresIn = expiresIn;
+	}
 }

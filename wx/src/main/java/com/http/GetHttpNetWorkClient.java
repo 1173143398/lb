@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.execpt.WxException;
+import com.util.Constants;
 
 @Service
 public class GetHttpNetWorkClient implements NetWorkClient,InitializingBean {
@@ -40,9 +41,12 @@ public class GetHttpNetWorkClient implements NetWorkClient,InitializingBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		Map<String,NetWorkClient> clients = new HashMap<String,NetWorkClient>();
-		clients.put("GET", this);
-		netWorkManager.addClient("HTTP", clients);
+		Map<String, NetWorkClient> client = netWorkManager.getClient(Constants.HTTP);
+		if(client == null){
+			client = new HashMap<String, NetWorkClient>();
+			netWorkManager.addClient(Constants.HTTP, client);
+		}
+		client.put(Constants.GET, this);
 	}
 
 }

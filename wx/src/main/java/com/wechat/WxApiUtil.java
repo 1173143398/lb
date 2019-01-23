@@ -42,7 +42,7 @@ public class WxApiUtil {
     }
 
     public static String getNetAccessToken() {
-        String Url = getTokenUrl(Constants.APP_ID,Constants.APP_SECRET);
+        String Url = getTokenUrl(Constants1.APP_ID,Constants1.APP_SECRET);
         //此请求为https的get请求，返回的数据格式为{"access_token":"ACCESS_TOKEN","expires_in":7200}
         String result = NetWorkUtil.getHttpsResponse(Url, "","");
         System.out.println("获取到的access_token="+result);

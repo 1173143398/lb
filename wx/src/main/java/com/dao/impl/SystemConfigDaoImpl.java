@@ -2,6 +2,7 @@ package com.dao.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -19,8 +20,9 @@ public class SystemConfigDaoImpl implements SystemConfigDao {
 	
 	@Override
 	public SystemConfig getSystemConfig() {
-		return jdbcTemplate.queryForObject("SELECT SERVER_MSG_TYPE,APP_ID,APP_SECRET,ACCESS_TOKEN,TIMER_UPDATE_TOKEN_URL "
-				+ " FROM SYSTEMP_CONFIG",
+		List<SystemConfig> systemConfigs = jdbcTemplate.query("SELECT SERVER_MSG_TYPE,APP_ID,APP_SECRET,ACCESS_TOKEN,TIMER_UPDATE_TOKEN_URL,"
+				+ " TMS,EXPIRES_IN "
+				+ " FROM SYSTEM_CONFIG",
 				new RowMapper<SystemConfig>(){
 
 			@Override
@@ -31,17 +33,23 @@ public class SystemConfigDaoImpl implements SystemConfigDao {
 				systemConfig.setAppSecret(rs.getString("APP_SECRET"));
 				systemConfig.setAccessToken(rs.getString("ACCESS_TOKEN"));
 				systemConfig.setTimerUpdateTokenUrl(rs.getString("TIMER_UPDATE_TOKEN_URL"));
+				systemConfig.setTms(rs.getTimestamp("TMS"));
+				systemConfig.setExpiresIn(rs.getInt("EXPIRES_IN"));
 				return systemConfig;
 			}
 			
 		});
+		if(systemConfigs != null && systemConfigs.size() > 0){
+			return systemConfigs.get(0);
+		}
+		return null;
 	}
 
 	@Override
 	public int update(SystemConfig systemConfig) {
 		return jdbcTemplate.update("UPDATE SYSTEMP_CONFIG SET SERVER_MSG_TYPE = ?,APP_ID = ?,APP_SECRET = ?,ACCESS_TOKEN = ? "
-				+ "TIMER_UPDATE_TOKEN_URL = ?,", systemConfig.getServerMsgType(),systemConfig.getAppId(),systemConfig.getAppSecret(),
-				systemConfig.getAccessToken());
+				+ "TIMER_UPDATE_TOKEN_URL = ?,EXPIRES_IN = ?,TMS = ?", systemConfig.getServerMsgType(),systemConfig.getAppId(),systemConfig.getAppSecret(),
+				systemConfig.getAccessToken(),systemConfig.getExpiresIn(),systemConfig.getTms());
 	}
 
 }

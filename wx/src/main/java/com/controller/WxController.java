@@ -3,12 +3,9 @@ package com.controller;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,9 +44,6 @@ public class WxController {
 	
 	@Autowired
 	private ClientConfigService clientConfigService;
-	
-	@Value("${SERVER_DEFALUT_MSG_TYPE}")
-	private String serverDefaultMsgType;
 	
 	@Autowired
 	private ParserManager parserManager;
@@ -124,9 +118,21 @@ public class WxController {
 		
 		Class<? extends IMessage> respClass = ClassUtil.getClass(clientConfig.getRespClass(), IMessage.class);
 		alert(respClass,"响应报文类应为:IMesssage.class");
+		
+		//解析请求报文
+		IContentParser reqParser = parserManager.getParser(clientConfig.getReqMsgType());
+		alert(reqParser,"请求报文解析类缺失");
+		
+		Class<? extends IMessage> reqClass = ClassUtil.getClass(clientConfig.getReqClass(), IMessage.class);
+		alert(reqClass,"请求报文类型应为:IMesssage.class");
+				
 		//GET方式处理 
 		if(Constants.GET.equals(clientConfig.getMethod())) {
-			String url = formatUrl(clientConfig.getUrl());
+			IMessage reqParam = null;
+			if(StringUtil.isNull(message) == false){
+				reqParam = reqParser.messageToBean(message, reqClass);
+			}
+			String url = formatUrl(clientConfig.getUrl(),reqParam);
 			log.info("发送URL:" + url);
 			String rs = client.send(url, "");
 			IMessage rsMsg = respParser.messageToBean(rs, respClass);
@@ -134,13 +140,6 @@ public class WxController {
 			String rMesssage = respParser.beanToMessage(afterSend, respClass);
 			return rMesssage;
 		}
-		//解析请求报文
-		IContentParser reqParser = parserManager.getParser(clientConfig.getReqMsgType());
-		alert(reqParser,"请求报文解析类缺失");
-		
-		Class<? extends IMessage> reqClass = ClassUtil.getClass(clientConfig.getReqClass(), IMessage.class);
-		alert(reqClass,"请求报文类型应为:IMesssage.class");
-		
 		
 		
 		//解析请求报文
@@ -148,7 +147,7 @@ public class WxController {
 		//访问wx前
 		IMessage sendMsg = messageService.beforeSend(clientConfig, parseMsg, reqClass);
 		//访问wx
-		String url = formatUrl(clientConfig.getUrl());
+		String url = formatUrl(clientConfig.getUrl(),parseMsg);
 		log.info("发送URL:" + url);
 		String msg = reqParser.beanToMessage(sendMsg, reqClass);
 		String rs = client.send(url, msg);
@@ -161,21 +160,28 @@ public class WxController {
 	}
 	
 
-	private String formatUrl(String url) {
+	private String formatUrl(String url,IMessage reqParam) {
 		Pattern compile = Pattern.compile("(\\$\\{\\w+\\})");
 		Matcher matcher = compile.matcher(url);
 		while(matcher.find()){
 			String param = matcher.group();
-			String pName = param.replace("$", "").replace("{", "").replace("}", "");
+			String pName = param.replaceAll("[\\$|\\{|\\}]", "");
 			String value = wxExpressionParser.getValue(TransactionContext.getSystemContext(), pName);
-			url.replace(param, value);
+			if(StringUtil.isNull(value)){
+				value = wxExpressionParser.getValue(reqParam, pName);
+			}
+			if(StringUtil.isNull(value)){
+				throw new WxException("获取参数值失败" + pName);
+			}
+			url = url.replace(param, value);
 		}
 		return url;
 	}
 
 	private String getEventType(String msg) {
 		if(StringUtil.isNull(msg) == false) {
-			IContentParser parser = parserManager.getParser(serverDefaultMsgType);
+			String type = TransactionContext.getSystemContext().getServerMsgType();
+			IContentParser parser = parserManager.getParser(type);
 			if(parser == null) {
 				throw new WxException("没有请求报文解析类");
 			}
@@ -187,7 +193,8 @@ public class WxController {
 
 	private String getMessage(String msg) {
 		if(StringUtil.isNull(msg) == false) {
-			IContentParser parser = parserManager.getParser(serverDefaultMsgType);
+			String type = TransactionContext.getSystemContext().getServerMsgType();
+			IContentParser parser = parserManager.getParser(type);
 			if(parser == null) {
 				throw new WxException("没有请求报文解析类");
 			}

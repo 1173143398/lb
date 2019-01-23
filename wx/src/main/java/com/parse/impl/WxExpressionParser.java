@@ -8,10 +8,11 @@ import com.parse.IWxExpressionParser;
 
 @Service
 public class WxExpressionParser implements IWxExpressionParser {
-
+	
+	private SpelExpressionParser parser = new SpelExpressionParser();
+	
 	@Override
 	public String getValue(Object context, String expression) {
-		SpelExpressionParser parser = new SpelExpressionParser();
 		Expression parseExpression = parser.parseExpression(expression);
 		String value = parseExpression.getValue(context, String.class);
 		return value;

@@ -1,8 +1,9 @@
 package com.message.client;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.message.IMessage;
 
-public class TokenMessage {
+public class TokenMessage implements IMessage{
 
 	@JSONField(name = "access_token")
 	private String accessToken;
@@ -35,6 +36,12 @@ public class TokenMessage {
 	}
 	public void setErrmsg(String errmsg) {
 		this.errmsg = errmsg;
+	}
+	@Override
+	public String toString() {
+		return "TokenMessage [accessToken=" + accessToken + ", expiresIn="
+				+ expiresIn + ", errcode=" + errcode + ", errmsg=" + errmsg
+				+ "]";
 	}
 	
 	

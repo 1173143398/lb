@@ -16,7 +16,11 @@ public class SystemConfigServiceImpl implements SystemConfigService {
 	
 	@Override
 	public SystemConfig getSystemConfig() {
-		return systemConfigDao.getSystemConfig();
+		SystemConfig systemConfig = systemConfigDao.getSystemConfig();
+		if(systemConfig == null){
+			throw new WxException("系统参数不存在");
+		}
+		return systemConfig;
 	}
 
 	@Override

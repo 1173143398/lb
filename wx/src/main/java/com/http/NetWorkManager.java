@@ -15,6 +15,14 @@ public class NetWorkManager {
 	}
 	
 	public NetWorkClient getClient(String key,String method) {
-		return clients.get(key).get(method);
+		Map<String,NetWorkClient> clients = getClient(key);
+		if(clients == null){
+			return null;
+		}
+		return clients.get(method);
+	}
+	
+	public Map<String,NetWorkClient> getClient(String key){
+		return clients.get(key);
 	}
 }
