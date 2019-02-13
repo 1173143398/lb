@@ -23,7 +23,7 @@ import com.util.Constants;
 @Service
 public class FileTransferClient implements FileTransfer ,InitializingBean{
 
-	private static Log log = LogFactory.getLog(PostHttpsNetWorkClient.class);
+	private static Log log = LogFactory.getLog(FileTransferClient.class);
 	
 	@Autowired
 	private FileTransferManager fileTransferManager;

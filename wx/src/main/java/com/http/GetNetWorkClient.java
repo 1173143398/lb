@@ -1,8 +1,5 @@
 package com.http;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -17,9 +14,9 @@ import com.execpt.WxException;
 import com.util.Constants;
 
 @Service
-public class GetHttpNetWorkClient implements NetWorkClient,InitializingBean {
+public class GetNetWorkClient implements NetWorkClient,InitializingBean {
 
-	private Log log = LogFactory.getLog(GetHttpNetWorkClient.class);
+	private Log log = LogFactory.getLog(GetNetWorkClient.class);
 	
 	@Autowired
 	private CloseableHttpClient closeableHttpClient;
@@ -41,12 +38,8 @@ public class GetHttpNetWorkClient implements NetWorkClient,InitializingBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		Map<String, NetWorkClient> client = netWorkManager.getClient(Constants.HTTP);
-		if(client == null){
-			client = new HashMap<String, NetWorkClient>();
-			netWorkManager.addClient(Constants.HTTP, client);
-		}
-		client.put(Constants.GET, this);
+		netWorkManager.addClient(Constants.GET, this);
 	}
+	
 
 }

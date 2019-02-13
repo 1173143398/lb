@@ -1,8 +1,5 @@
 package com.http;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -17,15 +14,15 @@ import com.execpt.WxException;
 import com.util.Constants;
 
 @Service
-public class PostHttpsNetWorkClient implements NetWorkClient ,InitializingBean{
+public class PostNetWorkClient implements NetWorkClient ,InitializingBean{
 
-	private static Log log = LogFactory.getLog(PostHttpsNetWorkClient.class);
-	
-	@Autowired
-	private NetWorkManager netWorkManager;
+	private static Log log = LogFactory.getLog(PostNetWorkClient.class);
 	
 	@Autowired
 	private CloseableHttpClient closeableHttpClient;
+	
+	@Autowired
+	private NetWorkManager netWorkManager;
 	
 	@Override
 	public String send(String url, String message) {
@@ -34,19 +31,14 @@ public class PostHttpsNetWorkClient implements NetWorkClient ,InitializingBean{
 			CloseableHttpResponse execute = closeableHttpClient.execute(post);
 			return EntityUtils.toString(execute.getEntity());
 		} catch (Exception e) {
-			log.error("PostHttpsNetWorkClient通信异常",e);
+			log.error("PostHttpNetWorkClient通信异常",e);
 			throw new WxException("通信异常");
 		}
 	}
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		Map<String, NetWorkClient> client = netWorkManager.getClient(Constants.HTTPS);
-		if(client == null){
-			client = new HashMap<String, NetWorkClient>();
-			netWorkManager.addClient(Constants.HTTPS, client);
-		}
-		client.put(Constants.POST, this);
+		netWorkManager.addClient(Constants.POST, this);
 	}
 
 }

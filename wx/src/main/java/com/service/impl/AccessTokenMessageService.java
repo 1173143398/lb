@@ -58,7 +58,7 @@ public class AccessTokenMessageService extends AbstractClientMessageService {
 
 	@Override
 	public IMessage doService(ClientConfig clientConfig, IMessage message) {
-		NetWorkClient client = netWorkManager.getClient(clientConfig.getShcema(), clientConfig.getMethod());
+		NetWorkClient client = netWorkManager.getClient(clientConfig.getMethod());
 		String newUrl = this.formatUrl(wxExpressionParser, clientConfig.getUrl(), message);
 		Class<? extends IMessage> reqClass = ClassUtil.getClass(clientConfig.getReqClass(), IMessage.class);
 		String msg = parserManager.getParser(clientConfig.getReqMsgType()).beanToMessage(message, reqClass);
