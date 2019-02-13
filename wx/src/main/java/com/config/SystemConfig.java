@@ -8,6 +8,7 @@ public class SystemConfig {
 	private String appId;
 	private String appSecret;
 	private String accessToken;
+	private String token;
 	private String timerUpdateTokenUrl;
 	private Timestamp tms;
 	private int expiresIn;
@@ -54,4 +55,11 @@ public class SystemConfig {
 	public void setExpiresIn(int expiresIn) {
 		this.expiresIn = expiresIn;
 	}
+	public String getToken() {
+		return token;
+	}
+	public void setToken(String token) {
+		this.token = token;
+	}
+	
 }

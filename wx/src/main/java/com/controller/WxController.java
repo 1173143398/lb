@@ -1,14 +1,12 @@
 package com.controller;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -16,21 +14,18 @@ import com.config.ClientConfig;
 import com.config.ServerConfig;
 import com.context.TransactionContext;
 import com.execpt.WxException;
-import com.http.NetWorkClient;
-import com.http.NetWorkManager;
 import com.message.IMessage;
 import com.message.server.EventMessage;
 import com.message.server.Message;
 import com.parse.IContentParser;
-import com.parse.IWxExpressionParser;
 import com.parse.impl.ParserManager;
 import com.security.SecurityService;
 import com.service.ClientConfigService;
 import com.service.ClientMessageService;
 import com.service.ServerConfigService;
 import com.service.ServerMessageService;
+import com.service.SignService;
 import com.util.ClassUtil;
-import com.util.Constants;
 import com.util.StringUtil;
 
 @Controller
@@ -49,10 +44,22 @@ public class WxController {
 	private ParserManager parserManager;
 	
 	@Autowired
-	private NetWorkManager netWorkManager;
-	@Autowired
-	private IWxExpressionParser wxExpressionParser;
-	@RequestMapping("receive")
+	private SignService signService ;
+	
+	@RequestMapping(value = "/receive",method = RequestMethod.GET)
+	@ResponseBody
+	public String sign(@RequestParam(value = "signature",required = false) String signature,
+			@RequestParam(value = "timestamp",required = false) String timestamp,
+			@RequestParam(value = "nonce",required = false) String nonce,
+			@RequestParam(value = "echostr",required = false) String echostr){
+		log.info("signature:"+signature+" timestamp:"+timestamp +" nonce:"+nonce+" echostr:"+echostr);
+		if(signService.checkSign(signature, timestamp, nonce)){
+			return echostr;
+		}
+		return "";
+	}
+	
+	@RequestMapping(value = "/receive",method = RequestMethod.POST)
 	@ResponseBody
 	public String receive(@RequestBody String message) {
 		log.info("接收报文:" + message);
@@ -91,12 +98,16 @@ public class WxController {
 		//解析请求报文
 		IMessage parseMsg = reqParser.messageToBean(message, reqClass);
 		//处理
-		IMessage rsMsg = messageService.doService(serverConfig,parseMsg,reqClass);
-		//返回响应报文
-		String rMesssage = respParser.beanToMessage(rsMsg, respClass);
-		//加密报文
-		String sMessage = securityService.encrypt(rMesssage);
-		return sMessage;
+		IMessage rsMsg = messageService.doService(serverConfig,parseMsg);
+		if(rsMsg != null){
+			
+			//返回响应报文
+			String rMesssage = respParser.beanToMessage(rsMsg, respClass);
+			//加密报文
+			String sMessage = securityService.encrypt(rMesssage);
+			return sMessage;
+		}
+		return "";
 	}
 	
 	@RequestMapping("/send")
@@ -106,9 +117,6 @@ public class WxController {
 		//获取配置
 		ClientConfig clientConfig = clientConfigService.getClientConfig(funcNo);
 		alert(clientConfig,"获取配置失败,功能号:" + funcNo);
-		
-		NetWorkClient client = netWorkManager.getClient(clientConfig.getShcema(), clientConfig.getMethod());
-		alert(client,"网络访问类缺失");
 		
 		ClientMessageService messageService = TransactionContext.getBean(clientConfig.getServiceBean(), ClientMessageService.class);
 		alert(messageService,"请求报文处理类缺失");
@@ -125,57 +133,16 @@ public class WxController {
 		
 		Class<? extends IMessage> reqClass = ClassUtil.getClass(clientConfig.getReqClass(), IMessage.class);
 		alert(reqClass,"请求报文类型应为:IMesssage.class");
-				
-		//GET方式处理 
-		if(Constants.GET.equals(clientConfig.getMethod())) {
-			IMessage reqParam = null;
-			if(StringUtil.isNull(message) == false){
-				reqParam = reqParser.messageToBean(message, reqClass);
-			}
-			String url = formatUrl(clientConfig.getUrl(),reqParam);
-			log.info("发送URL:" + url);
-			String rs = client.send(url, "");
-			IMessage rsMsg = respParser.messageToBean(rs, respClass);
-			IMessage afterSend = messageService.afterSend(clientConfig, rsMsg, respClass);
-			String rMesssage = respParser.beanToMessage(afterSend, respClass);
-			return rMesssage;
-		}
-		
 		
 		//解析请求报文
-		IMessage parseMsg = reqParser.messageToBean(message, reqClass);
-		//访问wx前
-		IMessage sendMsg = messageService.beforeSend(clientConfig, parseMsg, reqClass);
-		//访问wx
-		String url = formatUrl(clientConfig.getUrl(),parseMsg);
-		log.info("发送URL:" + url);
-		String msg = reqParser.beanToMessage(sendMsg, reqClass);
-		String rs = client.send(url, msg);
-		//返回响应报文 
-		IMessage rsMsg = respParser.messageToBean(rs, respClass);
-		//访问wx后
-		IMessage afterSend = messageService.afterSend(clientConfig, rsMsg, respClass);
-		String rMesssage = respParser.beanToMessage(afterSend, respClass);
-		return rMesssage;
-	}
-	
-
-	private String formatUrl(String url,IMessage reqParam) {
-		Pattern compile = Pattern.compile("(\\$\\{\\w+\\})");
-		Matcher matcher = compile.matcher(url);
-		while(matcher.find()){
-			String param = matcher.group();
-			String pName = param.replaceAll("[\\$|\\{|\\}]", "");
-			String value = wxExpressionParser.getValue(TransactionContext.getSystemContext(), pName);
-			if(StringUtil.isNull(value)){
-				value = wxExpressionParser.getValue(reqParam, pName);
-			}
-			if(StringUtil.isNull(value)){
-				throw new WxException("获取参数值失败" + pName);
-			}
-			url = url.replace(param, value);
+		IMessage parseMsg = null;
+		if(StringUtil.isNull(message) == false){
+			parseMsg = reqParser.messageToBean(message, reqClass);
 		}
-		return url;
+		IMessage rs = messageService.doService(clientConfig, parseMsg);
+		//返回响应报文 
+		String rMesssage = respParser.beanToMessage(rs, respClass);
+		return rMesssage;
 	}
 
 	private String getEventType(String msg) {

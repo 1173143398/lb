@@ -7,4 +7,8 @@ public class Constants {
 	
 	public static String HTTP = "HTTP";
 	public static String HTTPS = "HTTPS";
+	
+	public static String UPLOAD = "UPLOAD";
+	public static String DOWNLOAD = "DOWNLOAD";
+	
 }

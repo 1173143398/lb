@@ -7,7 +7,16 @@ public class SystemContext {
 	private String appSecret;
 	private String serverMsgType;
 	private String timerUpdateTokenUrl;
+	private String token;
 	
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
 	public synchronized String getAccessToken() {
 		return accessToken;
 	}

@@ -9,29 +9,39 @@ import com.config.ClientConfig;
 import com.config.SystemConfig;
 import com.context.SystemContext;
 import com.context.TransactionContext;
+import com.http.NetWorkClient;
+import com.http.NetWorkManager;
 import com.message.IMessage;
 import com.message.client.TokenMessage;
-import com.service.ClientMessageService;
+import com.parse.IWxExpressionParser;
+import com.parse.impl.ParserManager;
 import com.service.SystemConfigService;
+import com.util.ClassUtil;
 import com.util.StringUtil;
 import com.util.TimeUtil;
 
 @Service("accessTokenMessageService")
-public class AccessTokenMessageService implements ClientMessageService {
+public class AccessTokenMessageService extends AbstractClientMessageService {
 
 	private static Log log = LogFactory.getLog(AccessTokenMessageService.class);
 	@Autowired
 	private SystemConfigService systemConfigService;
 	
-	@Override
+	@Autowired
+	private NetWorkManager netWorkManager;
+	
+	@Autowired
+	private IWxExpressionParser wxExpressionParser;
+	
+	@Autowired
+	private ParserManager parserManager;
+	
 	public IMessage beforeSend(ClientConfig clientConfig, IMessage message,
 			Class<? extends IMessage> requiredType) {
 		return message;
 	}
 
-	@Override
-	public IMessage afterSend(ClientConfig clientConfig, IMessage message,
-			Class<? extends IMessage> requiredType) {
+	public IMessage afterSend(IMessage message) {
 		TokenMessage token = (TokenMessage)message;
 		log.info("获取token:" + token);
 		if(StringUtil.isNull(token.getErrcode())) {
@@ -44,6 +54,19 @@ public class AccessTokenMessageService implements ClientMessageService {
 			systemConfigService.update(systemConfig);
 		}
 		return message;
+	}
+
+	@Override
+	public IMessage doService(ClientConfig clientConfig, IMessage message) {
+		NetWorkClient client = netWorkManager.getClient(clientConfig.getShcema(), clientConfig.getMethod());
+		String newUrl = this.formatUrl(wxExpressionParser, clientConfig.getUrl(), message);
+		Class<? extends IMessage> reqClass = ClassUtil.getClass(clientConfig.getReqClass(), IMessage.class);
+		String msg = parserManager.getParser(clientConfig.getReqMsgType()).beanToMessage(message, reqClass);
+		String send = client.send(newUrl, msg);
+		Class<? extends IMessage> respClass = ClassUtil.getClass(clientConfig.getRespClass(), IMessage.class);
+		IMessage messageToBean = parserManager.getParser(clientConfig.getRespMsgType()).messageToBean(send, respClass);
+		afterSend(messageToBean);
+		return messageToBean;
 	}
 
 }

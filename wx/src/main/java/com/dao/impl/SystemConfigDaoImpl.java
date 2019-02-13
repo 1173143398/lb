@@ -20,7 +20,7 @@ public class SystemConfigDaoImpl implements SystemConfigDao {
 	
 	@Override
 	public SystemConfig getSystemConfig() {
-		List<SystemConfig> systemConfigs = jdbcTemplate.query("SELECT SERVER_MSG_TYPE,APP_ID,APP_SECRET,ACCESS_TOKEN,TIMER_UPDATE_TOKEN_URL,"
+		List<SystemConfig> systemConfigs = jdbcTemplate.query("SELECT SERVER_MSG_TYPE,APP_ID,APP_SECRET,ACCESS_TOKEN,TOKEN,TIMER_UPDATE_TOKEN_URL,"
 				+ " TMS,EXPIRES_IN "
 				+ " FROM SYSTEM_CONFIG",
 				new RowMapper<SystemConfig>(){
@@ -35,6 +35,7 @@ public class SystemConfigDaoImpl implements SystemConfigDao {
 				systemConfig.setTimerUpdateTokenUrl(rs.getString("TIMER_UPDATE_TOKEN_URL"));
 				systemConfig.setTms(rs.getTimestamp("TMS"));
 				systemConfig.setExpiresIn(rs.getInt("EXPIRES_IN"));
+				systemConfig.setToken(rs.getString("TOKEN"));
 				return systemConfig;
 			}
 			
@@ -47,8 +48,8 @@ public class SystemConfigDaoImpl implements SystemConfigDao {
 
 	@Override
 	public int update(SystemConfig systemConfig) {
-		return jdbcTemplate.update("UPDATE SYSTEMP_CONFIG SET SERVER_MSG_TYPE = ?,APP_ID = ?,APP_SECRET = ?,ACCESS_TOKEN = ? "
-				+ "TIMER_UPDATE_TOKEN_URL = ?,EXPIRES_IN = ?,TMS = ?", systemConfig.getServerMsgType(),systemConfig.getAppId(),systemConfig.getAppSecret(),
+		return jdbcTemplate.update("UPDATE SYSTEM_CONFIG SET ACCESS_TOKEN = ? "
+				+ ",EXPIRES_IN = ?,TMS = ?", 
 				systemConfig.getAccessToken(),systemConfig.getExpiresIn(),systemConfig.getTms());
 	}
 

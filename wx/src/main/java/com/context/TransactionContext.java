@@ -42,6 +42,7 @@ public class TransactionContext implements ApplicationContextAware,InitializingB
 		systemContext.setAppSecret(systemConfig.getAppSecret());
 		systemContext.setServerMsgType(systemConfig.getServerMsgType());
 		systemContext.setTimerUpdateTokenUrl(systemConfig.getTimerUpdateTokenUrl());
+		systemContext.setToken(systemConfig.getToken());
 	}
 
 }

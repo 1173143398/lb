@@ -5,8 +5,13 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 public class SSLContextBuilder {
 
+	private static Log log = LogFactory.getLog(SSLContextBuilder.class);
+	
 	public static SSLContext getInstance() {
 		try {
 			SSLContext sc = SSLContext.getInstance("TLS");
@@ -16,17 +21,24 @@ public class SSLContextBuilder {
 				@Override
 				public void checkClientTrusted(X509Certificate[] chain, String authType)
 						throws java.security.cert.CertificateException {
-					
+					log.info("=========================================");
+					log.info("===========checkClientTrusted======="+authType);
+					log.info("=========================================");
 				}
 
 				@Override
 				public void checkServerTrusted(X509Certificate[] chain, String authType)
 						throws java.security.cert.CertificateException {
-					
+					log.info("=========================================");
+					log.info("===========checkServerTrusted======="+authType);
+					log.info("=========================================");
 				}
 
 				@Override
 				public X509Certificate[] getAcceptedIssuers() {
+					log.info("=========================================");
+					log.info("===========getAcceptedIssuers=======");
+					log.info("=========================================");
 					return null;
 				}
 

@@ -5,5 +5,5 @@ import com.message.IMessage;
 
 public interface ServerMessageService {
 
-	IMessage doService(ServerConfig serverConfig,IMessage message,Class<? extends IMessage> requiredType);
+	IMessage doService(ServerConfig serverConfig,IMessage message);
 }
