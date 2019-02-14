@@ -51,6 +51,7 @@ public class AccessTokenMessageService extends AbstractClientMessageService {
 			systemConfig.setAccessToken(token.getAccessToken());
 			systemConfig.setExpiresIn(token.getExpiresIn());
 			systemConfig.setTms(TimeUtil.getTms());
+			systemConfig.setJsapiTicket(systemContext.getJsapiTicket());
 			systemConfigService.update(systemConfig);
 		}
 		return message;

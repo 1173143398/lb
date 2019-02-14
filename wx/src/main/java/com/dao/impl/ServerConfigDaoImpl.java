@@ -2,6 +2,7 @@ package com.dao.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,7 +19,7 @@ public class ServerConfigDaoImpl implements ServerConfigDao {
 	private JdbcTemplate jdbcTemplate;
 	@Override
 	public ServerConfig getServerConfig(String msgType,String eventType) {
-		return jdbcTemplate.queryForObject("SELECT MSG_TYPE,EVENT_TYPE,REQ_CLASS,REQ_MSG_TYPE,RESP_CLASS,RESP_MSG_TYPE,SERVICE_BEAN"
+		 List<ServerConfig> query = jdbcTemplate.query("SELECT MSG_TYPE,EVENT_TYPE,REQ_CLASS,REQ_MSG_TYPE,RESP_CLASS,RESP_MSG_TYPE,SERVICE_BEAN"
 				+ " FROM SERVER_CONFIG WHERE MSG_TYPE = ? AND EVENT_TYPE=?",
 				new RowMapper<ServerConfig>(){
 
@@ -36,6 +37,10 @@ public class ServerConfigDaoImpl implements ServerConfigDao {
 			}
 			
 		},msgType,eventType);
+		 if(query != null && query.size() > 0){
+			 return query.get(0);
+		 }
+		 return null;
 	}
 
 }

@@ -68,7 +68,8 @@ http://www.springframework.org/schema/tx/spring-tx-4.1.xsd">
 
 	<bean class="com.execpt.WxHandlerExceptionResolver"></bean>
 	
-	<mvc:resources mapping="/page/**" location="/WEB-INF/page/"></mvc:resources>
+	<mvc:resources mapping="/js/**" location="/WEB-INF/js/"></mvc:resources>
+	<mvc:resources mapping="/img/**" location="/WEB-INF/img/"></mvc:resources>
 	
 	<bean id="viewResolverJsp"
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">

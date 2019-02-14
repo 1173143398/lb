@@ -8,6 +8,7 @@ public class SystemContext {
 	private String serverMsgType;
 	private String timerUpdateTokenUrl;
 	private String token;
+	private String jsapiTicket;
 	
 	public String getToken() {
 		return token;
@@ -55,6 +56,14 @@ public class SystemContext {
 
 	public void setTimerUpdateTokenUrl(String timerUpdateTokenUrl) {
 		this.timerUpdateTokenUrl = timerUpdateTokenUrl;
+	}
+
+	public String getJsapiTicket() {
+		return jsapiTicket;
+	}
+
+	public void setJsapiTicket(String jsapiTicket) {
+		this.jsapiTicket = jsapiTicket;
 	}
 	
 }

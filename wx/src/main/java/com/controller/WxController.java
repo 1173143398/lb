@@ -59,7 +59,7 @@ public class WxController {
 		return "";
 	}
 	
-	@RequestMapping(value = "/receive",method = RequestMethod.POST)
+	@RequestMapping(value = "/receive",method = RequestMethod.POST,produces="application/json; charset=utf-8")
 	@ResponseBody
 	public String receive(@RequestBody String message) {
 		log.info("接收报文:" + message);
@@ -73,8 +73,8 @@ public class WxController {
 		log.info("消息类型:" + msgType);
 		//如果是event，再找事件类型
 		if("event".contentEquals(msgType)) {
-			log.info("事件类型:" + eventType);
 			eventType = getEventType(dMesssage);
+			log.info("事件类型:" + eventType);
 			alert(eventType,"获取事件类型失败");
 		}
 		//匹配数据库配置

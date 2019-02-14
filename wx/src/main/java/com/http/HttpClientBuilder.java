@@ -1,5 +1,7 @@
 package com.http;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -17,6 +19,7 @@ public class HttpClientBuilder {
     
     private int socketTimeout;
     
+    private long maxIdleTime;
     
 
     public static HttpClientBuilder create(){
@@ -36,7 +39,8 @@ public class HttpClientBuilder {
 				.setMaxConnTotal(getMaxTotal())
 				.setMaxConnPerRoute(getDefaultMaxPerRoute())
 				.setDefaultRequestConfig(requestConfig)
-				.evictExpiredConnections();
+				.evictExpiredConnections()
+				.evictIdleConnections(this.getMaxIdleTime(),TimeUnit.SECONDS);
 		return httpClientBuilder.build();
 	}
 
@@ -79,4 +83,14 @@ public class HttpClientBuilder {
 	public void setSocketTimeout(int socketTimeout) {
 		this.socketTimeout = socketTimeout;
 	}
+
+	public long getMaxIdleTime() {
+		return maxIdleTime;
+	}
+
+	public void setMaxIdleTime(long maxIdleTime) {
+		this.maxIdleTime = maxIdleTime;
+	}
+	
+	
 }

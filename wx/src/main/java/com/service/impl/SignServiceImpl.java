@@ -55,4 +55,12 @@ public class SignServiceImpl implements SignService{
 		}
 		return "";
 	}
+
+	@Override
+	public String sign(String jsapiTicket, String noncestr, String timestamp,
+			String url) {
+		String signStr = "jsapi_ticket="+jsapiTicket+"&noncestr="+noncestr
+				+"&timestamp="+timestamp+"&url="+url;
+		return this.shal(signStr);
+	}
 }

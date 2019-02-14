@@ -9,6 +9,7 @@ public class SystemConfig {
 	private String appSecret;
 	private String accessToken;
 	private String token;
+	private String jsapiTicket;
 	private String timerUpdateTokenUrl;
 	private Timestamp tms;
 	private int expiresIn;
@@ -61,5 +62,10 @@ public class SystemConfig {
 	public void setToken(String token) {
 		this.token = token;
 	}
-	
+	public String getJsapiTicket() {
+		return jsapiTicket;
+	}
+	public void setJsapiTicket(String jsapiTicket) {
+		this.jsapiTicket = jsapiTicket;
+	}
 }
