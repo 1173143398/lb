@@ -13,8 +13,6 @@ import com.http.NetWorkClient;
 import com.http.NetWorkManager;
 import com.message.IMessage;
 import com.message.client.TokenMessage;
-import com.parse.IWxExpressionParser;
-import com.parse.impl.ParserManager;
 import com.service.SystemConfigService;
 import com.util.ClassUtil;
 import com.util.StringUtil;
@@ -29,12 +27,6 @@ public class AccessTokenMessageService extends AbstractClientMessageService {
 	
 	@Autowired
 	private NetWorkManager netWorkManager;
-	
-	@Autowired
-	private IWxExpressionParser wxExpressionParser;
-	
-	@Autowired
-	private ParserManager parserManager;
 	
 	public IMessage beforeSend(ClientConfig clientConfig, IMessage message,
 			Class<? extends IMessage> requiredType) {
@@ -58,9 +50,9 @@ public class AccessTokenMessageService extends AbstractClientMessageService {
 	}
 
 	@Override
-	public IMessage doService(ClientConfig clientConfig, IMessage message) {
+	protected IMessage service(ClientConfig clientConfig, IMessage message) {
 		NetWorkClient client = netWorkManager.getClient(clientConfig.getMethod());
-		String newUrl = this.formatUrl(wxExpressionParser, clientConfig.getUrl(), message);
+		String newUrl = this.formatUrl(clientConfig.getUrl(), message);
 		Class<? extends IMessage> reqClass = ClassUtil.getClass(clientConfig.getReqClass(), IMessage.class);
 		String msg = parserManager.getParser(clientConfig.getReqMsgType()).beanToMessage(message, reqClass);
 		String send = client.send(newUrl, msg);

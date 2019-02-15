@@ -6,13 +6,12 @@ import com.config.ServerConfig;
 import com.message.IMessage;
 import com.message.server.TextInMessage;
 import com.message.server.TextOutMessage;
-import com.service.ServerMessageService;
 
 @Service("textServerMessageService")
-public class TextServerMessageService implements ServerMessageService{
+public class TextServerMessageService extends AbstractServerMessageService{
 
 	@Override
-	public IMessage doService(ServerConfig serverConfig,IMessage message) {
+	protected IMessage service(ServerConfig serverConfig, IMessage message) {
 		TextInMessage inMsg = (TextInMessage)message;
 		TextOutMessage outMsg = new TextOutMessage();
 		outMsg.setToUserName(inMsg.getFromUserName());

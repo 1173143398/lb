@@ -13,6 +13,8 @@ public class SystemConfig {
 	private String timerUpdateTokenUrl;
 	private Timestamp tms;
 	private int expiresIn;
+	private String securityType;
+	private String encodingAeskey;
 	
 	public String getServerMsgType() {
 		return serverMsgType;
@@ -68,4 +70,17 @@ public class SystemConfig {
 	public void setJsapiTicket(String jsapiTicket) {
 		this.jsapiTicket = jsapiTicket;
 	}
+	public String getSecurityType() {
+		return securityType;
+	}
+	public void setSecurityType(String securityType) {
+		this.securityType = securityType;
+	}
+	public String getEncodingAeskey() {
+		return encodingAeskey;
+	}
+	public void setEncodingAeskey(String encodingAeskey) {
+		this.encodingAeskey = encodingAeskey;
+	}
+	
 }

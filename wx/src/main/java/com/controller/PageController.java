@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.context.TransactionContext;
-import com.service.SignService;
+import com.security.SecurityService;
 import com.util.MathUtil;
 import com.util.StringUtil;
 
@@ -15,7 +15,7 @@ import com.util.StringUtil;
 public class PageController {
 
 	@Autowired
-	private SignService signService;
+	private SecurityService securityService;
 	
 	@RequestMapping("index")
 	public String index(HttpServletRequest request){
@@ -32,16 +32,20 @@ public class PageController {
 		}
 		String servletPath=request.getServletPath();
 		String qStr = request.getQueryString();
-//		String url = "http://q3sevr.natappfree.cc/wx/index";
 		String url = basePath + servletPath;
 		if(StringUtil.isNull(qStr) == false){
 			url = url + "?" +qStr;
 		}
-		String signature = signService.sign(jsapiTicket, nonceStr, timestamp, url);
+		String signature = securityService.sign(jsapiTicket, nonceStr, timestamp, url);
 		request.setAttribute("appId", appId);
 		request.setAttribute("timestamp", timestamp);
 		request.setAttribute("nonceStr", nonceStr);
 		request.setAttribute("signature", signature);
 		return "index";
+	}
+	
+	@RequestMapping("admin")
+	public String admin(){
+		return "admin";
 	}
 }

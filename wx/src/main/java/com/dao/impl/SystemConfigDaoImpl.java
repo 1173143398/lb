@@ -21,7 +21,7 @@ public class SystemConfigDaoImpl implements SystemConfigDao {
 	@Override
 	public SystemConfig getSystemConfig() {
 		List<SystemConfig> systemConfigs = jdbcTemplate.query("SELECT SERVER_MSG_TYPE,APP_ID,APP_SECRET,ACCESS_TOKEN,TOKEN,TIMER_UPDATE_TOKEN_URL,"
-				+ " TMS,EXPIRES_IN,JSAPI_TICKET "
+				+ " TMS,EXPIRES_IN,JSAPI_TICKET,SECRITY_TYPE,ENCODING_AESKEY "
 				+ " FROM SYSTEM_CONFIG",
 				new RowMapper<SystemConfig>(){
 
@@ -37,6 +37,8 @@ public class SystemConfigDaoImpl implements SystemConfigDao {
 				systemConfig.setExpiresIn(rs.getInt("EXPIRES_IN"));
 				systemConfig.setToken(rs.getString("TOKEN"));
 				systemConfig.setJsapiTicket(rs.getString("JSAPI_TICKET"));
+				systemConfig.setSecurityType(rs.getString("SECRITY_TYPE"));
+				systemConfig.setEncodingAeskey(rs.getString("ENCODING_AESKEY"));
 				return systemConfig;
 			}
 			

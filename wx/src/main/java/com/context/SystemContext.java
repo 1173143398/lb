@@ -9,6 +9,8 @@ public class SystemContext {
 	private String timerUpdateTokenUrl;
 	private String token;
 	private String jsapiTicket;
+	private String securityType;
+	private String encodingAesKey;
 	
 	public String getToken() {
 		return token;
@@ -64,6 +66,22 @@ public class SystemContext {
 
 	public void setJsapiTicket(String jsapiTicket) {
 		this.jsapiTicket = jsapiTicket;
+	}
+
+	public String getSecurityType() {
+		return securityType;
+	}
+
+	public void setSecurityType(String securityType) {
+		this.securityType = securityType;
+	}
+
+	public String getEncodingAesKey() {
+		return encodingAesKey;
+	}
+
+	public void setEncodingAesKey(String encodingAesKey) {
+		this.encodingAesKey = encodingAesKey;
 	}
 	
 }

@@ -10,8 +10,6 @@ import com.context.TransactionContext;
 import com.http.NetWorkManager;
 import com.message.IMessage;
 import com.message.client.JsapiTicketMessage;
-import com.parse.IWxExpressionParser;
-import com.parse.impl.ParserManager;
 import com.service.SystemConfigService;
 import com.util.ClassUtil;
 import com.util.TimeUtil;
@@ -23,17 +21,11 @@ public class JsapiTicketMessageService extends AbstractClientMessageService {
 	private NetWorkManager netWorkManager;
 	
 	@Autowired
-	private IWxExpressionParser wxExpressionParser;
-	
-	@Autowired
-	private ParserManager parserManager;
-	
-	@Autowired
 	private SystemConfigService systemConfigService;
 	
 	@Override
-	public IMessage doService(ClientConfig clientConfig, IMessage message) {
-		String formatUrl = this.formatUrl(wxExpressionParser, clientConfig.getUrl(), message);
+	public IMessage service(ClientConfig clientConfig, IMessage message) {
+		String formatUrl = this.formatUrl(clientConfig.getUrl(), message);
 		Class<? extends IMessage> reqClass = ClassUtil.getClass(clientConfig.getReqClass(), IMessage.class);
 		String msg = parserManager.getParser(clientConfig.getReqMsgType()).beanToMessage(message, reqClass);
 		String send = netWorkManager.getClient(clientConfig.getMethod()).send(formatUrl, msg);

@@ -1,9 +1,8 @@
 package com.service;
 
 import com.config.ClientConfig;
-import com.message.IMessage;
 
 public interface ClientMessageService {
 
-	IMessage doService(ClientConfig clientConfig,IMessage message);
+	String doService(ClientConfig clientConfig,String message);
 }

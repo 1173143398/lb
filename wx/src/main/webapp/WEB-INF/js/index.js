@@ -474,11 +474,15 @@ wx.ready(function () {
   document.querySelector('#chooseWXPay').onclick = function () {
     // 注意：此 Demo 使用 2.7 版本支付接口实现，建议使用此接口时参考微信支付相关最新文档。
     wx.chooseWXPay({
-      timestamp: 1414723227,
-      nonceStr: 'noncestr',
-      package: 'addition=action_id%3dgaby1234%26limit_pay%3d&bank_type=WX&body=innertest&fee_type=1&input_charset=GBK&notify_url=http%3A%2F%2F120.204.206.246%2Fcgi-bin%2Fmmsupport-bin%2Fnotifypay&out_trade_no=1414723227818375338&partner=1900000109&spbill_create_ip=127.0.0.1&total_fee=1&sign=432B647FE95C7BF73BCD177CEECBEF8D',
-      signType: 'SHA1', // 注意：新版支付接口使用 MD5 加密
-      paySign: 'bd5b1933cda6e9548862944836a9b52e8c9a2b69'
+        "timeStamp":"1395712654",         //时间戳，自1970年以来的秒数     
+        "nonceStr":"e61463f8efa94090b1f366cccfbbb444", //随机串     
+        "package":"prepay_id=u802345jgfjsdfgsdg888",     
+        "signType":"MD5",         //微信签名方式：     
+        "paySign":"70EA570631E4BB79628FBCA90534C63FF7FADD89", //微信签名
+    	success: function (res) {
+    	// 支付成功后的回调函数
+    		alert(JSON.stringify(res));
+    	}
     });
   };
 

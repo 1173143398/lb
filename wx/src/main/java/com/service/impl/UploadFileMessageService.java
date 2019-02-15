@@ -8,8 +8,6 @@ import com.http.FilePo;
 import com.http.FileTransferManager;
 import com.message.IMessage;
 import com.message.client.UploadFileInMessage;
-import com.parse.IWxExpressionParser;
-import com.parse.impl.ParserManager;
 import com.util.ClassUtil;
 import com.util.StringUtil;
 
@@ -17,17 +15,11 @@ import com.util.StringUtil;
 public class UploadFileMessageService extends AbstractClientMessageService {
 
 	@Autowired
-	private IWxExpressionParser wxExpressionParser;
-	
-	@Autowired
-	private ParserManager parserManager;
-	
-	@Autowired
 	private FileTransferManager fileTransferManager;
 	
 	@Override
-	public IMessage doService(ClientConfig clientConfig, IMessage message) {
-		String formatUrl = this.formatUrl(wxExpressionParser, clientConfig.getUrl(), message);
+	public IMessage service(ClientConfig clientConfig, IMessage message) {
+		String formatUrl = this.formatUrl(clientConfig.getUrl(), message);
 		UploadFileInMessage uploadFileMessage = (UploadFileInMessage)message;
 		FilePo file = new FilePo();
 		file.setFilePath(uploadFileMessage.getFilePath());
