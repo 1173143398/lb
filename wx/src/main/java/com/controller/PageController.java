@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.context.TransactionContext;
 import com.security.SecurityService;
+import com.service.ClientConfigService;
 import com.util.MathUtil;
 import com.util.StringUtil;
 
@@ -17,7 +18,10 @@ public class PageController {
 	@Autowired
 	private SecurityService securityService;
 	
-	@RequestMapping("index")
+	@Autowired
+	private ClientConfigService clientConfigService;
+	
+	@RequestMapping("/index")
 	public String index(HttpServletRequest request){
 		String appId = TransactionContext.getSystemContext().getAppId();
 		String jsapiTicket = TransactionContext.getSystemContext().getJsapiTicket();
@@ -44,8 +48,9 @@ public class PageController {
 		return "index";
 	}
 	
-	@RequestMapping("admin")
+	@RequestMapping("/admin")
 	public String admin(){
 		return "admin";
 	}
+	
 }

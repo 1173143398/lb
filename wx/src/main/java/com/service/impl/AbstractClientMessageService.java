@@ -69,9 +69,7 @@ public abstract class AbstractClientMessageService implements
 		if(StringUtil.isNull(message) == false){
 			reqMsg = reqParser.messageToBean(message, reqClass);
 		}
-		IMessage respMsg = this.service(clientConfig, reqMsg);
+		IMessage respMsg = this.doService(clientConfig, reqMsg);
 		return respParser.beanToMessage(respMsg, respClass);
 	}
-	
-	protected abstract IMessage service(ClientConfig clientConfig,IMessage message);
 }

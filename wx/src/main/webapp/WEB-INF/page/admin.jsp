@@ -11,6 +11,7 @@
 	<button id="getJsapiTicket">获取jsapi_ticket</button>
 	<button id="createMenu">创建菜单</button>
 	<button id="deleteMenu">删除菜单</button>
+	<button id="wxPay">支付测试</button>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery-1.7.1.min.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/admin.js"></script>
 	

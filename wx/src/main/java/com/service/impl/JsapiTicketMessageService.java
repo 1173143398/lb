@@ -24,7 +24,7 @@ public class JsapiTicketMessageService extends AbstractClientMessageService {
 	private SystemConfigService systemConfigService;
 	
 	@Override
-	public IMessage service(ClientConfig clientConfig, IMessage message) {
+	public IMessage doService(ClientConfig clientConfig, IMessage message) {
 		String formatUrl = this.formatUrl(clientConfig.getUrl(), message);
 		Class<? extends IMessage> reqClass = ClassUtil.getClass(clientConfig.getReqClass(), IMessage.class);
 		String msg = parserManager.getParser(clientConfig.getReqMsgType()).beanToMessage(message, reqClass);

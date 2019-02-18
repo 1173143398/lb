@@ -50,7 +50,7 @@ public class AccessTokenMessageService extends AbstractClientMessageService {
 	}
 
 	@Override
-	protected IMessage service(ClientConfig clientConfig, IMessage message) {
+	public IMessage doService(ClientConfig clientConfig, IMessage message) {
 		NetWorkClient client = netWorkManager.getClient(clientConfig.getMethod());
 		String newUrl = this.formatUrl(clientConfig.getUrl(), message);
 		Class<? extends IMessage> reqClass = ClassUtil.getClass(clientConfig.getReqClass(), IMessage.class);

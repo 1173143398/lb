@@ -18,7 +18,7 @@ public class DownloadFileMessageService extends AbstractClientMessageService {
 	private FileTransferManager fileTransferManager;
 	
 	@Override
-	public IMessage service(ClientConfig clientConfig, IMessage message) {
+	public IMessage doService(ClientConfig clientConfig, IMessage message) {
 		String formatUrl = this.formatUrl(clientConfig.getUrl(), message);
 		DownloadFileInMessage downloadFileMessage = (DownloadFileInMessage)message;
 		FilePo file = new FilePo();

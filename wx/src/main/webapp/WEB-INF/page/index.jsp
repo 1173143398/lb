@@ -44,6 +44,14 @@
 	<a href="javascript:;" class="weui-btn weui-btn_primary" id="openProductSpecificView">跳转微信商品页接口</a><br/>
 	<a href="javascript:;" class="weui-btn weui-btn_primary" id="chooseWXPay">发起一个微信支付请求</a><br/>
 	<a href="javascript:;" class="weui-btn weui-btn_primary" id="h5Pay">微信内H5调起支付</a><br/>
+	<form action="${pageContext.request.contextPath}">
+		<input name="feeType" value="CNY"><br/>
+		<input name="totalFee" value="1"><br/>
+		<input name="spbillCreateIp" value="192.168.0.1"><br/>
+		<input name="tradeType" value="JSAPI"><br/>
+		<input name="productId" value="T20190218"><br/>
+		<input name="openid" value=""><br/>
+	</form>
 	<script type="text/javascript">
 	  wx.config({
 	      debug: true,
@@ -90,33 +98,7 @@
 	        'openCard'
 	      ]
 	  });
-	  function onBridgeReady(){
-		  if (typeof WeixinJSBridge == "undefined"){
-			  alert("WeixinJSBridge undefined");
-			  return ;
-		  }
-		   WeixinJSBridge.invoke(
-		      'getBrandWCPayRequest', {
-		         "appId":"wx2421b1c4370ec43b",     //公众号名称，由商户传入     
-		         "timeStamp":"1395712654",         //时间戳，自1970年以来的秒数     
-		         "nonceStr":"e61463f8efa94090b1f366cccfbbb444", //随机串     
-		         "package":"prepay_id=u802345jgfjsdfgsdg888",     
-		         "signType":"MD5",         //微信签名方式：     
-		         "paySign":"70EA570631E4BB79628FBCA90534C63FF7FADD89" //微信签名 
-		      },
-		      function(res){
-		      if(res.err_msg == "get_brand_wcpay_request:ok" ){
-		      // 使用以上方式判断前端返回,微信团队郑重提示：
-		            //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
-		      } 
-		      alert(JSON.stringify(res));
-		   }); 
-		}
-		
-		
-	  document.querySelector('#h5Pay').onclick = function () {
-		  onBridgeReady();
-		  };
+	  
 	</script>
 </body>
 </html>

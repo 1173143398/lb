@@ -42,4 +42,27 @@
 				    alert(data);
 				  });
 	});
+	
+	$("#wxPay").bind("click",function(){
+		$.ajax({
+			  type: 'POST',
+			  url: "/wx/send?funcno=00006",
+			  contentType:"application/json;charset=utf-8",
+			  data: JSON.stringify({
+					"fee_type":"CNY",
+					"total_fee":"1",
+					"spbill_create_ip":"192.168.0.1",
+					"trade_type":"JSAPI",
+					"product_id":"T20190217",
+					"openid":"123"
+				}),
+			  success: function(data){
+				  alert(data);
+			  },
+			  error : function(){
+				  alert("error");
+			  }
+			 
+			});
+	});
 })(jQuery);
