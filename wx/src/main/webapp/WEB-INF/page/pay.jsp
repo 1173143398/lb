@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
-    pageEncoding="utf-8"%>
+    pageEncoding="utf-8" isELIgnored="false"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -11,6 +11,13 @@
 </head>
 <body>
 	<a href="javascript:;" class="weui-btn weui-btn_primary" id="h5Pay">微信内H5调起支付</a><br/>
+	${error}<br/>
+	${appId}<br/>
+	${timeStamp}<br/>
+	${nonceStr}<br/>
+	${packageStr}<br/>
+	${signType}<br/>
+	${paySign}<br/>
 	<script type="text/javascript">
 	 function onBridgeReady(){
 		  if (typeof WeixinJSBridge == "undefined"){
@@ -22,7 +29,7 @@
 		         "appId":"${appId}",     //公众号名称，由商户传入     
 		         "timeStamp":"${timeStamp}",         //时间戳，自1970年以来的秒数     
 		         "nonceStr":"${nonceStr}", //随机串     
-		         "package":"${package}",     
+		         "package":"${packageStr}",     
 		         "signType":"${signType}",         //微信签名方式：     
 		         "paySign":"${paySign}" //微信签名 
 		      },

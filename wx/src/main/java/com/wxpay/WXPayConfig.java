@@ -29,7 +29,17 @@ public abstract class WXPayConfig {
      */
    public abstract String getKey();
 
+   /**
+    * 沙箱 API 密钥
+    * @return
+    */
+   public abstract String getSandboxSignkey();
 
+   public abstract boolean getUseSandbox();
+   
+   public abstract String getNotifyUrl();
+   
+   public abstract boolean getAutoReport();
     /**
      * 获取商户证书内容
      *

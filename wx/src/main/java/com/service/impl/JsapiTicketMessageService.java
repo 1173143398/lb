@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 
 import com.config.ClientConfig;
 import com.config.SystemConfig;
-import com.context.SystemContext;
 import com.context.TransactionContext;
 import com.http.NetWorkManager;
 import com.message.IMessage;
@@ -32,13 +31,10 @@ public class JsapiTicketMessageService extends AbstractClientMessageService {
 		Class<? extends IMessage> respClass = ClassUtil.getClass(clientConfig.getRespClass(), IMessage.class);
 		JsapiTicketMessage jsapiTicketMessage = (JsapiTicketMessage)parserManager.getParser(clientConfig.getRespMsgType()).messageToBean(send, respClass);
 		if("0".equals(jsapiTicketMessage.getErrcode())){
-			SystemContext systemContext = TransactionContext.getSystemContext();
-			systemContext.setJsapiTicket(jsapiTicketMessage.getTicket());
-			SystemConfig systemConfig = new SystemConfig();
-			systemConfig.setAccessToken(systemContext.getAccessToken());
+			SystemConfig systemConfig = TransactionContext.getSystemConfig();
 			systemConfig.setExpiresIn(jsapiTicketMessage.getExpiresIn());
 			systemConfig.setTms(TimeUtil.getTms());
-			systemConfig.setJsapiTicket(systemContext.getJsapiTicket());
+			systemConfig.setJsapiTicket(jsapiTicketMessage.getTicket());
 			systemConfigService.update(systemConfig);
 		}
 		return jsapiTicketMessage;

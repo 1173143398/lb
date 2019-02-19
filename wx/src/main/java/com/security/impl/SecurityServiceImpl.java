@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import com.context.TransactionContext;
 import com.execpt.WxException;
 import com.qq.weixin.mp.aes.AesException;
-import com.qq.weixin.mp.aes.SHA1;
 import com.qq.weixin.mp.aes.WXBizMsgCrypt;
 import com.security.SecurityService;
 import com.util.StringUtil;
@@ -23,8 +22,8 @@ public class SecurityServiceImpl implements SecurityService {
 			return message;
 		}
 		try {
-			WXBizMsgCrypt c = new WXBizMsgCrypt(TransactionContext.getSystemContext().getToken(),
-					TransactionContext.getSystemContext().getEncodingAesKey(),TransactionContext.getSystemContext().getAppId());
+			WXBizMsgCrypt c = new WXBizMsgCrypt(TransactionContext.getSystemConfig().getToken(),
+					TransactionContext.getSystemConfig().getEncodingAeskey(),TransactionContext.getSystemConfig().getAppId());
 			return c.encryptMsg(message, timeStamp, nonce);
 		} catch (AesException e) {
 			throw new WxException("加密失败");
@@ -37,8 +36,8 @@ public class SecurityServiceImpl implements SecurityService {
 			return message;
 		}
 		try {
-			WXBizMsgCrypt c = new WXBizMsgCrypt(TransactionContext.getSystemContext().getToken(),
-					TransactionContext.getSystemContext().getEncodingAesKey(),TransactionContext.getSystemContext().getAppId());
+			WXBizMsgCrypt c = new WXBizMsgCrypt(TransactionContext.getSystemConfig().getToken(),
+					TransactionContext.getSystemConfig().getEncodingAeskey(),TransactionContext.getSystemConfig().getAppId());
 			return c.decryptMsg(sign, timeStamp, nonce, message);
 		} catch (AesException e) {
 			throw new WxException("解密失败");
@@ -47,7 +46,7 @@ public class SecurityServiceImpl implements SecurityService {
 	
 	@Override
 	public boolean checkSign(String signature, String timestamp, String nonce) {
-		String sortStr = sort(TransactionContext.getSystemContext().getToken(), timestamp, nonce);
+		String sortStr = sort(TransactionContext.getSystemConfig().getToken(), timestamp, nonce);
 		String mySignature = shal(sortStr);
 		if (!"".equals(signature) && !"".equals(mySignature)
 				&& signature.equals(mySignature)) {

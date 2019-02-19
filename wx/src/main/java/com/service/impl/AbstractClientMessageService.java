@@ -34,7 +34,7 @@ public abstract class AbstractClientMessageService implements
 			String pName = param.replaceAll("[\\$|\\{|\\}]", "");
 			String value = null;
 			try{
-				value = wxExpressionParser.getValue(TransactionContext.getSystemContext(), pName);
+				value = wxExpressionParser.getValue(TransactionContext.getSystemConfig(), pName);
 				if(StringUtil.isNull(value)){
 					value = wxExpressionParser.getValue(reqParam, pName);
 				}

@@ -20,7 +20,8 @@ public class SystemConfigDaoImpl implements SystemConfigDao {
 	
 	@Override
 	public SystemConfig getSystemConfig() {
-		List<SystemConfig> systemConfigs = jdbcTemplate.query("SELECT SERVER_MSG_TYPE,APP_ID,APP_SECRET,ACCESS_TOKEN,TOKEN,TIMER_UPDATE_TOKEN_URL,"
+		List<SystemConfig> systemConfigs = jdbcTemplate.query("SELECT SERVER_MSG_TYPE,APP_ID,"
+				+ "APP_SECRET,ACCESS_TOKEN,TOKEN,DOMAIN,"
 				+ " TMS,EXPIRES_IN,JSAPI_TICKET,SECRITY_TYPE,ENCODING_AESKEY "
 				+ " FROM SYSTEM_CONFIG",
 				new RowMapper<SystemConfig>(){
@@ -32,7 +33,7 @@ public class SystemConfigDaoImpl implements SystemConfigDao {
 				systemConfig.setAppId(rs.getString("APP_ID"));
 				systemConfig.setAppSecret(rs.getString("APP_SECRET"));
 				systemConfig.setAccessToken(rs.getString("ACCESS_TOKEN"));
-				systemConfig.setTimerUpdateTokenUrl(rs.getString("TIMER_UPDATE_TOKEN_URL"));
+				systemConfig.setDomain(rs.getString("DOMAIN"));
 				systemConfig.setTms(rs.getTimestamp("TMS"));
 				systemConfig.setExpiresIn(rs.getInt("EXPIRES_IN"));
 				systemConfig.setToken(rs.getString("TOKEN"));
