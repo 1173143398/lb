@@ -9,7 +9,7 @@
 <title>支付测试</title>
 </head>
 <body>
-<form name="payForm" action="${pageContext.request.contextPath}/pay">
+<form name="payForm" action="${pageContext.request.contextPath}/h5pay">
 	<div class="weui-cells weui-cells_form">
            <div class="weui-cell">
                <div class="weui-cell__hd"><label class="weui-label">feeType</label></div>
@@ -32,7 +32,7 @@
            <div class="weui-cell">
                <div class="weui-cell__hd"><label class="weui-label">tradeType</label></div>
                <div class="weui-cell__bd">
-                   <input class="weui-input" name="tradeType" type="text" value="JSAPI">
+                   <input class="weui-input" name="tradeType" type="text" value="MWEB">
                </div>
            </div>
            <div class="weui-cell">

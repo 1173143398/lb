@@ -1,25 +1,25 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : con
-Source Server Version : 50506
-Source Host           : localhost:3306
+Source Server         : conn
+Source Server Version : 50724
+Source Host           : 192.168.164.129:3306
 Source Database       : wx
 
 Target Server Type    : MYSQL
-Target Server Version : 50506
+Target Server Version : 50724
 File Encoding         : 65001
 
-Date: 2019-02-19 18:22:07
+Date: 2019-02-19 22:10:17
 */
 
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
--- Table structure for `clilent_config`
+-- Table structure for `client_config`
 -- ----------------------------
-DROP TABLE IF EXISTS `clilent_config`;
-CREATE TABLE `clilent_config` (
+DROP TABLE IF EXISTS `client_config`;
+CREATE TABLE `client_config` (
   `FUNC_NO` char(5) NOT NULL,
   `FUNC_DESC` varchar(256) DEFAULT NULL,
   `SHCEMA` varchar(10) DEFAULT NULL,
@@ -34,15 +34,15 @@ CREATE TABLE `clilent_config` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of clilent_config
+-- Records of client_config
 -- ----------------------------
-INSERT INTO `clilent_config` VALUES ('00000', '获取access_token', 'HTTPS', 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${appId}&secret=${appSecret}', 'GET', 'com.message.client.DefaultClientMessage', 'JSON', 'com.message.client.TokenMessage', 'JSON', 'accessTokenMessageService');
-INSERT INTO `clilent_config` VALUES ('00001', '上传素材', 'HTTPS', 'https://api.weixin.qq.com/cgi-bin/media/upload?access_token=${accessToken}&type=${type}', 'UPLOAD', 'com.message.client.UploadFileInMessage', 'JSON', 'com.message.client.UploadFileOutMessage', 'JSON', 'uploadFileMessageService');
-INSERT INTO `clilent_config` VALUES ('00002', '下载素材', 'HTTP', 'https://api.weixin.qq.com/cgi-bin/media/get?access_token=${accessToken}&media_id=${mediaId}', 'DOWNLOAD', 'com.message.client.DownloadFileInMessage', 'JSON', 'com.message.client.DownloadFileOutMessage', 'JSON', 'downloadFileMessageService');
-INSERT INTO `clilent_config` VALUES ('00003', '创建菜单', 'HTTPS', 'https://api.weixin.qq.com/cgi-bin/menu/create?access_token=${accessToken}', 'POST', 'com.message.client.CreateMenuInMessage', 'JSON', 'com.message.client.CreateMenuOutMessage', 'JSON', 'createMenuMessageService');
-INSERT INTO `clilent_config` VALUES ('00004', '获取jsapi_ticket', 'HTTPS', 'https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=${accessToken}&type=jsapi', 'GET', 'com.message.client.DefaultClientMessage', 'JSON', 'com.message.client.JsapiTicketMessage', 'JSON', 'jsapiTicketMessageService');
-INSERT INTO `clilent_config` VALUES ('00005', '删除菜单', 'HTTPS', 'https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=${accessToken}', 'GET', 'com.message.client.DefaultClientMessage', 'JSON', 'com.message.client.DeleteMenuMessage', 'JSON', 'deleteMenuMessageService');
-INSERT INTO `clilent_config` VALUES ('00007', '获取微信支付沙箱signkey', '', '', '', 'com.message.client.SandboxSignKeyInMessage', 'JSON', 'com.message.client.SandboxSignKeyOutMessage', 'JSON', 'sandboxSignKeyService');
+INSERT INTO `client_config` VALUES ('00000', '获取access_token', 'HTTPS', 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${appId}&secret=${appSecret}', 'GET', 'com.message.client.DefaultClientMessage', 'JSON', 'com.message.client.TokenMessage', 'JSON', 'accessTokenMessageService');
+INSERT INTO `client_config` VALUES ('00001', '上传素材', 'HTTPS', 'https://api.weixin.qq.com/cgi-bin/media/upload?access_token=${accessToken}&type=${type}', 'UPLOAD', 'com.message.client.UploadFileInMessage', 'JSON', 'com.message.client.UploadFileOutMessage', 'JSON', 'uploadFileMessageService');
+INSERT INTO `client_config` VALUES ('00002', '下载素材', 'HTTP', 'https://api.weixin.qq.com/cgi-bin/media/get?access_token=${accessToken}&media_id=${mediaId}', 'DOWNLOAD', 'com.message.client.DownloadFileInMessage', 'JSON', 'com.message.client.DownloadFileOutMessage', 'JSON', 'downloadFileMessageService');
+INSERT INTO `client_config` VALUES ('00003', '创建菜单', 'HTTPS', 'https://api.weixin.qq.com/cgi-bin/menu/create?access_token=${accessToken}', 'POST', 'com.message.client.CreateMenuInMessage', 'JSON', 'com.message.client.CreateMenuOutMessage', 'JSON', 'createMenuMessageService');
+INSERT INTO `client_config` VALUES ('00004', '获取jsapi_ticket', 'HTTPS', 'https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=${accessToken}&type=jsapi', 'GET', 'com.message.client.DefaultClientMessage', 'JSON', 'com.message.client.JsapiTicketMessage', 'JSON', 'jsapiTicketMessageService');
+INSERT INTO `client_config` VALUES ('00005', '删除菜单', 'HTTPS', 'https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=${accessToken}', 'GET', 'com.message.client.DefaultClientMessage', 'JSON', 'com.message.client.DeleteMenuMessage', 'JSON', 'deleteMenuMessageService');
+INSERT INTO `client_config` VALUES ('00007', '获取微信支付沙箱signkey', '', '', '', 'com.message.client.SandboxSignKeyInMessage', 'JSON', 'com.message.client.SandboxSignKeyOutMessage', 'JSON', 'sandboxSignKeyService');
 
 -- ----------------------------
 -- Table structure for `server_config`

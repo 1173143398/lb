@@ -23,12 +23,12 @@
 					          {    
 					               "type":"view",
 					               "name":"网页授权",
-					               "url":"http://u5qn9q.natappfree.cc/wx/authorize"
+					               "url":"http://jrzdnd.natappfree.cc/wx/authorize"
 					           },
 					           {    
 					               "type":"view",
 					               "name":"网页测试",
-					               "url":"http://u5qn9q.natappfree.cc/wx/index"
+					               "url":"http://jrzdnd.natappfree.cc/wx/index"
 					           }]
 				}),
 			  success: function(data){

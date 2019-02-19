@@ -71,4 +71,22 @@ public class PayController {
 		ret.put("return_msg", "OK");
 		return ret;
 	}
+	
+	@RequestMapping("/h5pay")
+	public String h5pay(WxPayInMessage message){
+		WxPayOutMessage wxPayOutMessage = (WxPayOutMessage)payService.doService(null, message);
+		log.info(wxPayOutMessage.getErrCode() + "|" + wxPayOutMessage.getReturnCode() + "|" +
+				wxPayOutMessage.getReturnMsg());
+		return "redirect:" + wxPayOutMessage.getMwebUrl();
+	}
+	
+	@RequestMapping("/nativepay")
+	public String nativePay(WxPayInMessage message,HttpServletRequest request){
+		WxPayOutMessage wxPayOutMessage = (WxPayOutMessage)payService.doService(null, message);
+		log.info(wxPayOutMessage.getErrCode() + "|" + wxPayOutMessage.getReturnCode() + "|" +
+				wxPayOutMessage.getReturnMsg());
+		String codeUrl = wxPayOutMessage.getCodeUrl();
+		request.setAttribute("code_url", codeUrl);
+		return "native_pay";
+	}
 }
