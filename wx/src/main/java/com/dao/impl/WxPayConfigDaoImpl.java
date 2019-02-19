@@ -22,8 +22,8 @@ public class WxPayConfigDaoImpl implements WxPayConfigDao {
 	public WxPayConfig getWxPayConfig() {
 		List<WxPayConfig> WxPayConfigs = jdbcTemplate.query("SELECT APP_ID,MCH_ID,"
 				+ "WX_KEY,CERT_PATH,WX_DOMAIN,PRIMARY_DOMAIN,NOTIFY_URL,AUTO_REPORT,"
-				+ "USE_SANDBOX,SANDBOX_SIGN_KEY  "
-				+ " FROM WX_PAY_CONFIG",
+				+ "USE_SANDBOX,SANDBOX_SIGN_KEY ,APP_SECRET "
+				+ " FROM WX_PAY_CONFIG ",
 				new RowMapper<WxPayConfig>(){
 
 			@Override
@@ -39,6 +39,7 @@ public class WxPayConfigDaoImpl implements WxPayConfigDao {
 				WxPayConfig.setUseSandbox(rs.getString("USE_SANDBOX"));
 				WxPayConfig.setWxDomain(rs.getString("WX_DOMAIN"));
 				WxPayConfig.setSandboxSignKey(rs.getString("SANDBOX_SIGN_KEY"));
+				WxPayConfig.setAppSecret(rs.getString("APP_SECRET"));
 				return WxPayConfig;
 			}
 			
