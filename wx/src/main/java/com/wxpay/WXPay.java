@@ -3,10 +3,17 @@ package com.wxpay;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.context.TransactionContext;
 import com.wxpay.WXPayConstants.SignType;
 
-public class WXPay {
+@Component
+public class WXPay implements InitializingBean{
 
+	@Autowired
     private WXPayConfig config;
     private SignType signType;
     private boolean autoReport;
@@ -14,8 +21,8 @@ public class WXPay {
     private String notifyUrl;
     private WXPayRequest wxPayRequest;
 
-    public WXPay(final WXPayConfig config) throws Exception {
-        this(config, null, true, false);
+    public WXPay(){
+       
     }
 
     public WXPay(final WXPayConfig config, final boolean autoReport) throws Exception {
@@ -101,7 +108,11 @@ public class WXPay {
         else if (SignType.HMACSHA256.equals(this.signType)) {
             reqData.put("sign_type", WXPayConstants.HMACSHA256);
         }
-        reqData.put("sign", WXPayUtil.generateSignature(reqData, config.getKey(), this.signType));
+        if(this.useSandbox){
+        	reqData.put("sign", WXPayUtil.generateSignature(reqData, config.getSandboxSignkey(), this.signType));
+        }else{
+        	reqData.put("sign", WXPayUtil.generateSignature(reqData, config.getKey(), this.signType));
+        }
         return reqData;
     }
 
@@ -114,7 +125,11 @@ public class WXPay {
      */
     public boolean isResponseSignatureValid(Map<String, String> reqData) throws Exception {
         // 返回数据的签名方式和请求中给定的签名方式是一致的
-        return WXPayUtil.isSignatureValid(reqData, this.config.getKey(), this.signType);
+    	if(this.useSandbox){
+    		return WXPayUtil.isSignatureValid(reqData, this.config.getSandboxSignkey(), this.signType);
+    	}else{
+    		return WXPayUtil.isSignatureValid(reqData, this.config.getKey(), this.signType);
+    	}
     }
 
     /**
@@ -693,5 +708,31 @@ public class WXPay {
         return this.processResponseXml(respXml);
     }
 
+    public Map<String, String> getSandboxSignkey(Map<String, String> reqData) throws Exception{
+    	 String url;
+         if (this.useSandbox) {
+             url = WXPayConstants.SANDBOX_SIGN_KEY_URL_SUFFIX;
+         }
+         else {
+             url = WXPayConstants.SANDBOX_SIGN_KEY_URL_SUFFIX;
+         }
+         String sign = WXPayUtil.generateSignature(reqData, TransactionContext.getWxPayConfig().getKey());
+         reqData.put("sign", sign);
+         String respXml = this.requestWithoutCert(url, reqData, this.config.getHttpConnectTimeoutMs(), this.config.getHttpReadTimeoutMs());
+         return WXPayUtil.xmlToMap(respXml);
+    }
 
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		 this.notifyUrl = config.getNotifyUrl();
+		 this.autoReport = config.getAutoReport();
+		 this.useSandbox = config.getUseSandbox();
+		 this.wxPayRequest = new WXPayRequest(config);
+		 if (useSandbox) {
+	            this.signType = SignType.MD5; // 沙箱环境
+	        }
+	        else {
+	            this.signType = SignType.HMACSHA256;
+	        }
+	}
 } // end class

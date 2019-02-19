@@ -2,33 +2,31 @@ package com.wxpay;
 
 import java.io.InputStream;
 
+import org.springframework.stereotype.Service;
+
+import com.context.TransactionContext;
+
+@Service
 public class DefaultWXPayConfig extends WXPayConfig {
 
-	private String appID;
-	private String mchID;
-	private String key;
-	private String certPath;
-	private String domain;
-	private boolean primaryDomain;
-	
 	@Override
 	public String getAppID() {
-		return appID;
+		return TransactionContext.getWxPayConfig().getAppId();
 	}
 
 	@Override
 	public String getMchID() {
-		return mchID;
+		return TransactionContext.getWxPayConfig().getMchId();
 	}
 
 	@Override
 	public String getKey() {
-		return key;
+		return TransactionContext.getWxPayConfig().getKey();
 	}
 
 	@Override
 	public InputStream getCertStream() {
-		return Thread.currentThread().getContextClassLoader().getResourceAsStream(certPath);
+		return Thread.currentThread().getContextClassLoader().getResourceAsStream(TransactionContext.getWxPayConfig().getCertPath());
 	}
 
 	@Override
@@ -43,46 +41,42 @@ public class DefaultWXPayConfig extends WXPayConfig {
 
 			@Override
 			public DomainInfo getDomain(WXPayConfig config) {
-				return new DomainInfo(domain,primaryDomain);
+				boolean primaryDomain = "true".equalsIgnoreCase(TransactionContext.getWxPayConfig().getPrimaryDomain());
+				return new DomainInfo(TransactionContext.getWxPayConfig().getWxDomain(),
+						primaryDomain);
 			}
 			
 		};
 	}
 
 	public String getCertPath() {
-		return certPath;
-	}
-
-	public void setCertPath(String certPath) {
-		this.certPath = certPath;
+		return TransactionContext.getWxPayConfig().getCertPath();
 	}
 
 	public String getDomain() {
-		return domain;
+		return TransactionContext.getWxPayConfig().getWxDomain();
 	}
 
-	public void setDomain(String domain) {
-		this.domain = domain;
+	
+
+	@Override
+	public String getSandboxSignkey() {
+		return TransactionContext.getWxPayConfig().getSandboxSignKey();
 	}
 
-	public boolean isPrimaryDomain() {
-		return primaryDomain;
+	@Override
+	public boolean getUseSandbox() {
+		return "true".equalsIgnoreCase(TransactionContext.getWxPayConfig().getUseSandbox());
 	}
 
-	public void setPrimaryDomain(boolean primaryDomain) {
-		this.primaryDomain = primaryDomain;
+	@Override
+	public String getNotifyUrl() {
+		return TransactionContext.getWxPayConfig().getNotifyUrl();
 	}
 
-	public void setAppID(String appID) {
-		this.appID = appID;
-	}
-
-	public void setMchID(String mchID) {
-		this.mchID = mchID;
-	}
-
-	public void setKey(String key) {
-		this.key = key;
+	@Override
+	public boolean getAutoReport() {
+		return "true".equalsIgnoreCase(TransactionContext.getWxPayConfig().getAutoReport());
 	}
 
 	

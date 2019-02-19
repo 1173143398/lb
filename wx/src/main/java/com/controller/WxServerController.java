@@ -105,7 +105,7 @@ public class WxServerController {
 
 	private String getEventType(String msg) {
 		if(StringUtil.isNull(msg) == false) {
-			String type = TransactionContext.getSystemContext().getServerMsgType();
+			String type = TransactionContext.getSystemConfig().getServerMsgType();
 			IContentParser parser = parserManager.getParser(type);
 			if(parser == null) {
 				throw new WxException("没有请求报文解析类");
@@ -118,7 +118,7 @@ public class WxServerController {
 
 	private String getMsgType(String msg) {
 		if(StringUtil.isNull(msg) == false) {
-			String type = TransactionContext.getSystemContext().getServerMsgType();
+			String type = TransactionContext.getSystemConfig().getServerMsgType();
 			IContentParser parser = parserManager.getParser(type);
 			if(parser == null) {
 				throw new WxException("没有请求报文解析类");

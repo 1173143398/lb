@@ -10,7 +10,7 @@ public class SystemConfig {
 	private String accessToken;
 	private String token;
 	private String jsapiTicket;
-	private String timerUpdateTokenUrl;
+	private String domain;
 	private Timestamp tms;
 	private int expiresIn;
 	private String securityType;
@@ -40,11 +40,12 @@ public class SystemConfig {
 	public void setAccessToken(String accessToken) {
 		this.accessToken = accessToken;
 	}
-	public String getTimerUpdateTokenUrl() {
-		return timerUpdateTokenUrl;
+	
+	public String getDomain() {
+		return domain;
 	}
-	public void setTimerUpdateTokenUrl(String timerUpdateTokenUrl) {
-		this.timerUpdateTokenUrl = timerUpdateTokenUrl;
+	public void setDomain(String domain) {
+		this.domain = domain;
 	}
 	public Timestamp getTms() {
 		return tms;

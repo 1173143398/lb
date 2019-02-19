@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import com.config.ClientConfig;
 import com.config.SystemConfig;
-import com.context.SystemContext;
 import com.context.TransactionContext;
 import com.http.NetWorkClient;
 import com.http.NetWorkManager;
@@ -37,13 +36,10 @@ public class AccessTokenMessageService extends AbstractClientMessageService {
 		TokenMessage token = (TokenMessage)message;
 		log.info("获取token:" + token);
 		if(StringUtil.isNull(token.getErrcode())) {
-			SystemContext systemContext = TransactionContext.getSystemContext();
-			systemContext.setAccessToken(token.getAccessToken());
-			SystemConfig systemConfig = new SystemConfig();
+			SystemConfig systemConfig = TransactionContext.getSystemConfig();
 			systemConfig.setAccessToken(token.getAccessToken());
 			systemConfig.setExpiresIn(token.getExpiresIn());
 			systemConfig.setTms(TimeUtil.getTms());
-			systemConfig.setJsapiTicket(systemContext.getJsapiTicket());
 			systemConfigService.update(systemConfig);
 		}
 		return message;

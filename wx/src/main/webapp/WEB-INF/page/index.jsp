@@ -44,13 +44,13 @@
 	<a href="javascript:;" class="weui-btn weui-btn_primary" id="openProductSpecificView">跳转微信商品页接口</a><br/>
 	<a href="javascript:;" class="weui-btn weui-btn_primary" id="chooseWXPay">发起一个微信支付请求</a><br/>
 	<a href="javascript:;" class="weui-btn weui-btn_primary" id="h5Pay">微信内H5调起支付</a><br/>
-	<form action="${pageContext.request.contextPath}">
+	<form action="${pageContext.request.contextPath}/pay">
 		<input name="feeType" value="CNY"><br/>
 		<input name="totalFee" value="1"><br/>
 		<input name="spbillCreateIp" value="192.168.0.1"><br/>
 		<input name="tradeType" value="JSAPI"><br/>
 		<input name="productId" value="T20190218"><br/>
-		<input name="openid" value=""><br/>
+		<input name="openid" value="${openid}"><br/>
 	</form>
 	<script type="text/javascript">
 	  wx.config({

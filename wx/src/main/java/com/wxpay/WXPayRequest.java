@@ -45,6 +45,7 @@ public class WXPayRequest {
      * @throws Exception
      */
     private String requestOnce(final String domain, String urlSuffix, String uuid, String data, int connectTimeoutMs, int readTimeoutMs, boolean useCert) throws Exception {
+System.out.println("==============>"+data);
         BasicHttpClientConnectionManager connManager;
         if (useCert) {
             // 证书
