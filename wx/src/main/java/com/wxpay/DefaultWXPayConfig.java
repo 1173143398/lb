@@ -2,13 +2,19 @@ package com.wxpay;
 
 import java.io.InputStream;
 
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.context.TransactionContext;
+import com.service.WxPayConfigService;
 
-@Service
-public class DefaultWXPayConfig extends WXPayConfig {
+@Component
+public class DefaultWXPayConfig extends WXPayConfig implements InitializingBean{
 
+	@Autowired
+	private WxPayConfigService wxPayConfigService;
+	
 	@Override
 	public String getAppID() {
 		return TransactionContext.getWxPayConfig().getAppId();
@@ -79,5 +85,9 @@ public class DefaultWXPayConfig extends WXPayConfig {
 		return "true".equalsIgnoreCase(TransactionContext.getWxPayConfig().getAutoReport());
 	}
 
-	
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		TransactionContext.setWxPayConfig(wxPayConfigService.getWxPayConfig());
+	}
+
 }

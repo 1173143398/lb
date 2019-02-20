@@ -7,7 +7,10 @@
 <title>Insert title here</title>
 </head>
 <body>
-<div id="output"></div>
+<div style="text-align:center">
+	<div id="output"></div>
+	<div>${code_url}</div>
+</div>
 <script src="${pageContext.request.contextPath}/js/jquery-1.7.1.min.js"></script>
 <script src="${pageContext.request.contextPath}/js/jquery.qrcode.min.js"></script>
 <script>

@@ -4,20 +4,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.context.TransactionContext;
+import com.message.client.WxJsapiPayMessage;
 import com.message.client.WxPayInMessage;
 import com.message.client.WxPayOutMessage;
-import com.service.ClientMessageService;
 import com.service.WxPayService;
 import com.util.MathUtil;
 import com.wxpay.WXPay;
@@ -28,37 +28,36 @@ public class PayController {
 	private static Log log = LogFactory.getLog(PayController.class);
 	
 	@Autowired
-	@Qualifier("wxPayMessageService")
-	private ClientMessageService payService;
+	private WxPayService payService;
 	
 	@Autowired
 	private WXPay wxPay;
 	
-	@RequestMapping("/pay")
-	public String pay(WxPayInMessage message,HttpServletRequest request){
-		WxPayOutMessage wxPayOutMessage = (WxPayOutMessage)payService.doService(null, message);
+	@RequestMapping("/pay/jsapipay")
+	public String pay(WxPayInMessage wxPayInMessage,HttpServletRequest request){
+		WxPayOutMessage wxPayOutMessage = payService.unifiedOrder(wxPayInMessage);
 		log.info(wxPayOutMessage.getErrCode() + "|" + wxPayOutMessage.getReturnCode() + "|" +
 				wxPayOutMessage.getReturnMsg());
 		request.setAttribute("error", wxPayOutMessage.getReturnMsg());
 		String appId = TransactionContext.getWxPayConfig().getAppId();
-		String timestamp = String.valueOf(System.currentTimeMillis());
+		String timeStamp = String.valueOf(System.currentTimeMillis());
 		String nonceStr = MathUtil.getRandomStr();
 		String packageStr = "prepay_id=" + wxPayOutMessage.getPrepayId();
+		
+		WxJsapiPayMessage wxJsapiPayMessage = new WxJsapiPayMessage();
+		wxJsapiPayMessage.setAppId(appId);
+		wxJsapiPayMessage.setNonceStr(nonceStr);
+		wxJsapiPayMessage.setPackageStr(packageStr);
+		wxJsapiPayMessage.setTimeStamp(timeStamp);
+		String signature = payService.sign(wxJsapiPayMessage);
+		
 		request.setAttribute("appId", appId);
-		request.setAttribute("timeStamp", timestamp);
+		request.setAttribute("timeStamp", timeStamp);
 		request.setAttribute("nonceStr", nonceStr);
 		request.setAttribute("packageStr", packageStr);
-		//appId、timeStamp、nonceStr、package、signType
-		Map<String,String> data = new HashMap<String,String>();
-		data.put("appId", appId);
-		data.put("timeStamp", timestamp);
-		data.put("nonceStr", nonceStr);
-		data.put("package", packageStr);
-		WxPayService wxPayService = (WxPayService)payService;
-		String signature = wxPayService.sign(data);
 		request.setAttribute("paySign", signature);
-		request.setAttribute("signType", data.get("signType"));
-		return "pay";
+		request.setAttribute("signType",wxJsapiPayMessage.getSignType());
+		return "jsapipay";
 	}
 	
 	@RequestMapping("/pay/receive")
@@ -72,21 +71,63 @@ public class PayController {
 		return ret;
 	}
 	
-	@RequestMapping("/h5pay")
-	public String h5pay(WxPayInMessage message){
-		WxPayOutMessage wxPayOutMessage = (WxPayOutMessage)payService.doService(null, message);
+	@RequestMapping("/pay/h5paypage")
+	public String h5PayPage(){
+		return "h5pay";
+	}
+	@RequestMapping("/pay/h5pay")
+	public String h5pay(WxPayInMessage wxPayInMessage){
+		WxPayOutMessage wxPayOutMessage = payService.unifiedOrder(wxPayInMessage);
 		log.info(wxPayOutMessage.getErrCode() + "|" + wxPayOutMessage.getReturnCode() + "|" +
 				wxPayOutMessage.getReturnMsg());
 		return "redirect:" + wxPayOutMessage.getMwebUrl();
 	}
 	
-	@RequestMapping("/nativepay")
-	public String nativePay(WxPayInMessage message,HttpServletRequest request){
-		WxPayOutMessage wxPayOutMessage = (WxPayOutMessage)payService.doService(null, message);
+	@RequestMapping("/pay/nativepay")
+	public String nativePay(WxPayInMessage wxPayInMessage,HttpServletRequest request){
+		WxPayOutMessage wxPayOutMessage = payService.unifiedOrder(wxPayInMessage);
 		log.info(wxPayOutMessage.getErrCode() + "|" + wxPayOutMessage.getReturnCode() + "|" +
 				wxPayOutMessage.getReturnMsg());
 		String codeUrl = wxPayOutMessage.getCodeUrl();
 		request.setAttribute("code_url", codeUrl);
-		return "native_pay";
+		return "nativepay";
+	}
+	
+	@RequestMapping("/pay/authorize")
+	public String authorize(HttpServletRequest request){
+		log.info("==>"+request.getQueryString());
+		String path = request.getContextPath();
+		String basePath = request.getScheme() + "://" + request.getServerName() + path;
+		if(!(80 == request.getServerPort())){
+			basePath = request.getScheme() + "://" + request.getServerName() 
+					+ ":" + request.getServerPort() + path;
+		}
+		String uri = basePath  + "/pay/redirect";
+		return "redirect:"+payService.getJsapiAuthorizeOpenIdUrl(uri);
+	}
+	
+	@RequestMapping("/pay/redirect")
+	public String authorizeRedirect(HttpSession session,HttpServletRequest request,String code,String state){
+		String openId = payService.getJsapiAuthorizeOpenId(code, state);
+		session.setAttribute("openid", openId);
+		return "authorize";
+	}
+	
+	@RequestMapping("/pay")
+	public String pay(HttpServletRequest request){
+		return "pay";
+	}
+	@RequestMapping("/pay/getuserinfo")
+	public String getUserInfo(HttpServletRequest request){
+		String path = request.getContextPath();
+		String basePath = request.getScheme() + "://" + request.getServerName() + path;
+		if(!(80 == request.getServerPort())){
+			basePath = request.getScheme() + "://" + request.getServerName() 
+					+ ":" + request.getServerPort() + path;
+		}
+		String uri = basePath  + "/pay/redirect";
+		String url = payService.getJsapiUserInfo(uri);
+		request.setAttribute("url", url);
+		return "getuserinfo";
 	}
 }

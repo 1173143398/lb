@@ -471,20 +471,6 @@ wx.ready(function () {
 
   // 10 微信支付接口
   // 10.1 发起一个支付请求
-  document.querySelector('#chooseWXPay').onclick = function () {
-    // 注意：此 Demo 使用 2.7 版本支付接口实现，建议使用此接口时参考微信支付相关最新文档。
-    wx.chooseWXPay({
-        "timeStamp":"1395712654",         //时间戳，自1970年以来的秒数     
-        "nonceStr":"e61463f8efa94090b1f366cccfbbb444", //随机串     
-        "package":"prepay_id=u802345jgfjsdfgsdg888",     
-        "signType":"MD5",         //微信签名方式：     
-        "paySign":"70EA570631E4BB79628FBCA90534C63FF7FADD89", //微信签名
-    	success: function (res) {
-    	// 支付成功后的回调函数
-    		alert(JSON.stringify(res));
-    	}
-    });
-  };
 
   // 11.3  跳转微信商品页
   document.querySelector('#openProductSpecificView').onclick = function () {
