@@ -8,8 +8,6 @@ import org.springframework.stereotype.Service;
 
 import com.context.TransactionContext;
 import com.execpt.WxException;
-import com.qq.weixin.mp.aes.AesException;
-import com.qq.weixin.mp.aes.WXBizMsgCrypt;
 import com.security.SecurityService;
 import com.util.StringUtil;
 

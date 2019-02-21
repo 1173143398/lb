@@ -6,7 +6,7 @@
 
 // ------------------------------------------------------------------------
 
-package com.qq.weixin.mp.aes;
+package com.security.impl;
 
 import java.security.MessageDigest;
 import java.util.Arrays;
@@ -16,7 +16,7 @@ import java.util.Arrays;
  *
  * 计算公众平台的消息签名接口.
  */
-public class SHA1 {
+class SHA1 {
 
 	/**
 	 * 用SHA1算法生成安全签名

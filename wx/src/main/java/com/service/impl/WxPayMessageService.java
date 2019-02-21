@@ -5,12 +5,13 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.context.TransactionContext;
 import com.execpt.WxException;
-import com.http.NetWorkManager;
+import com.http.GetRequestExecutor;
 import com.message.client.AuthorizeMessage;
 import com.message.client.WxJsapiPayMessage;
 import com.message.client.WxPayInMessage;
@@ -36,8 +37,7 @@ public class WxPayMessageService implements WxPayService {
 	private ParserManager parserManager;
 	
 	@Autowired
-	private NetWorkManager netWorkManager;
-	
+	private CloseableHttpClient httpClient;
 	@Override
 	public String sign(WxJsapiPayMessage wxJsapiPayMessage) {
 		try {
@@ -115,14 +115,15 @@ public class WxPayMessageService implements WxPayService {
 	}
 
 	@Override
-	public String getJsapiAuthorizeOpenId(String code,String state) {
+	public String getJsapiAuthorizeOpenId(String code,String state) throws Exception{
 		String url = "https://api.weixin.qq.com/sns/oauth2/access_token?"
 				+ "appid=%s&secret=%s&code=%s"
 				+ "&grant_type=authorization_code";
 		String appId = TransactionContext.getSystemConfig().getAppId();
 		String secret = TransactionContext.getSystemConfig().getAppSecret();
 		url = String.format(url, appId,secret,code);
-		String message = netWorkManager.getClient(Constants.GET).send(url, null);
+		GetRequestExecutor getRequestExecutor = new GetRequestExecutor();
+		String message = getRequestExecutor.execute(httpClient, url, null);
 		AuthorizeMessage authorizeMessage = (AuthorizeMessage)parserManager.getParser(Constants.JSON).messageToBean(message, AuthorizeMessage.class);
 		return authorizeMessage.getOpenid();
 	}

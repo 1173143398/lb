@@ -1,5 +1,6 @@
 package com.service.impl;
 
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.config.ClientConfig;
@@ -21,12 +22,15 @@ public abstract class AbstractClientMessageService implements
 	@Autowired
 	protected IWxExpressionParser wxExpressionParser;
 	
+	@Autowired
+	protected CloseableHttpClient httpClient;
+	
 	protected String formatUrl(String url,IMessage reqParam) {
 		return StringUtil.formatUrl(wxExpressionParser, url, reqParam);
 	}
 
 	@Override
-	public String doService(ClientConfig clientConfig, String message) {
+	public String doService(ClientConfig clientConfig, String message) throws Exception{
 		IContentParser respParser = parserManager.getParser(clientConfig.getRespMsgType());
 		ExceptionUtil.alert(respParser,"响应报文解析类缺失");
 		
@@ -49,6 +53,6 @@ public abstract class AbstractClientMessageService implements
 		return respParser.beanToMessage(respMsg, respClass);
 	}
 	
-	protected abstract IMessage doService(ClientConfig clientConfig,IMessage message);
+	protected abstract IMessage doService(ClientConfig clientConfig,IMessage message) throws Exception;
 	
 }

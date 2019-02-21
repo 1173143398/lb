@@ -107,7 +107,7 @@ public class PayController {
 	}
 	
 	@RequestMapping("/pay/redirect")
-	public String authorizeRedirect(HttpSession session,HttpServletRequest request,String code,String state){
+	public String authorizeRedirect(HttpSession session,HttpServletRequest request,String code,String state) throws Exception{
 		String openId = payService.getJsapiAuthorizeOpenId(code, state);
 		session.setAttribute("openid", openId);
 		return "authorize";

@@ -25,7 +25,7 @@ public class WxClientController {
 	
 	@RequestMapping("/send")
 	@ResponseBody
-	public String send(@RequestBody(required = false) String message,@RequestParam("funcno") String funcNo) {
+	public String send(@RequestBody(required = false) String message,@RequestParam("funcno") String funcNo) throws Exception {
 		ExceptionUtil.alert(funcNo,"功能号不能为空");
 		//获取配置
 		ClientConfig clientConfig = clientConfigService.getClientConfig(funcNo);

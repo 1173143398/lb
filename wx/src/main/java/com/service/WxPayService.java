@@ -12,7 +12,7 @@ public interface WxPayService {
 	
 	String getJsapiAuthorizeOpenIdUrl(String redirectUrl);
 	
-	String getJsapiAuthorizeOpenId(String code,String state);
+	String getJsapiAuthorizeOpenId(String code,String state)  throws Exception;
 	
 	String getJsapiUserInfo(String redirectUrl);
 }

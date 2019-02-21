@@ -3,6 +3,7 @@ package com.wxpay;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,28 +16,14 @@ public class WXPay implements InitializingBean{
 	@Autowired
     private WXPayConfig config;
 	
+	@Autowired
+	private CloseableHttpClient httpClient;
+	
     private SignType signType;
     private WXPayRequest wxPayRequest;
 
     public WXPay(){
        
-    }
-
-    public WXPay(final WXPayConfig config, final boolean autoReport) throws Exception {
-        this(config, null, autoReport, false);
-    }
-
-
-    public WXPay(final WXPayConfig config, final boolean autoReport, final boolean useSandbox) throws Exception{
-        this(config, null, autoReport, useSandbox);
-    }
-
-    public WXPay(final WXPayConfig config, final String notifyUrl) throws Exception {
-        this(config, notifyUrl, true, false);
-    }
-
-    public WXPay(final WXPayConfig config, final String notifyUrl, final boolean autoReport) throws Exception {
-        this(config, notifyUrl, autoReport, false);
     }
     
     public WXPayConfig getWXPayConfig(){
@@ -47,19 +34,7 @@ public class WXPay implements InitializingBean{
     	return this.signType.toString();
     }
 
-    public WXPay(final WXPayConfig config, final String notifyUrl, final boolean autoReport, final boolean useSandbox) throws Exception {
-        this.config = config;
-//        this.notifyUrl = notifyUrl;
-//        this.autoReport = autoReport;
-//        this.useSandbox = useSandbox;
-        if (useSandbox) {
-            this.signType = SignType.MD5; // 沙箱环境
-        }
-        else {
-            this.signType = SignType.HMACSHA256;
-        }
-        this.wxPayRequest = new WXPayRequest(config);
-    }
+  
 
     private void checkWXPayConfig() throws Exception {
         if (this.config == null) {
@@ -721,7 +696,7 @@ public class WXPay implements InitializingBean{
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		 this.wxPayRequest = new WXPayRequest(config);
+		 this.wxPayRequest = new WXPayRequest(config,httpClient);
 		 if (config.getUseSandbox()) {
 	            this.signType = SignType.MD5; // 沙箱环境
 	        }

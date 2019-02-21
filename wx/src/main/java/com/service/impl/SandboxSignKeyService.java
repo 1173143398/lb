@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import com.config.ClientConfig;
 import com.context.TransactionContext;
 import com.execpt.WxException;
-import com.http.NetWorkManager;
 import com.message.IMessage;
 import com.message.client.SandboxSignKeyOutMessage;
 import com.service.WxPayConfigService;

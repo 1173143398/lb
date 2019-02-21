@@ -1,4 +1,4 @@
-package com.qq.weixin.mp.aes;
+package com.security.impl;
 
 @SuppressWarnings("serial")
 public class AesException extends Exception {
