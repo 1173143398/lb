@@ -20,23 +20,12 @@
 	});
 	
 	$("#createMenu").bind("click",function(){
+		var t = $("#createMenuTxt").val();
 		$.ajax({
 			  type: 'POST',
 			  url: "/wx/send?funcno=00003",
 			  contentType:"application/json;charset=utf-8",
-			  data: JSON.stringify({
-					"button":[
-					          {    
-					               "type":"view",
-					               "name":"pay",
-					               "url":"http://e5gasi.natappfree.cc/wx/pay"
-					           },
-					           {    
-					               "type":"view",
-					               "name":"index",
-					               "url":"http://e5gasi.natappfree.cc/wx/index"
-					           }]
-				}),
+			  data: t,
 			  success: function(data){
 				  alert(data);
 			  },

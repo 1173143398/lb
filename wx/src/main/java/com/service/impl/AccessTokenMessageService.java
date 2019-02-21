@@ -12,7 +12,6 @@ import com.http.GetRequestExecutor;
 import com.message.IMessage;
 import com.message.client.TokenMessage;
 import com.service.SystemConfigService;
-import com.util.ClassUtil;
 import com.util.StringUtil;
 import com.util.TimeUtil;
 
@@ -29,8 +28,7 @@ public class AccessTokenMessageService extends AbstractClientMessageService {
 		return message;
 	}
 
-	public IMessage afterSend(IMessage message) {
-		TokenMessage token = (TokenMessage)message;
+	public IMessage afterSend(TokenMessage token) {
 		log.info("获取token:" + token);
 		if(StringUtil.isNull(token.getErrcode())) {
 			SystemConfig systemConfig = TransactionContext.getSystemConfig();
@@ -39,18 +37,17 @@ public class AccessTokenMessageService extends AbstractClientMessageService {
 			systemConfig.setTms(TimeUtil.getTms());
 			systemConfigService.update(systemConfig);
 		}
-		return message;
+		return token;
 	}
 
 	@Override
 	public IMessage doService(ClientConfig clientConfig, IMessage message) throws Exception {
 		String newUrl = this.formatUrl(clientConfig.getUrl(), message);
-		Class<? extends IMessage> reqClass = ClassUtil.getClass(clientConfig.getReqClass(), IMessage.class);
-		String msg = parserManager.getParser(clientConfig.getReqMsgType()).beanToMessage(message, reqClass);
+		
 		GetRequestExecutor getRequestExecutor = new GetRequestExecutor();
-		String send = getRequestExecutor.execute(httpClient, newUrl, msg);
-		Class<? extends IMessage> respClass = ClassUtil.getClass(clientConfig.getRespClass(), IMessage.class);
-		IMessage messageToBean = parserManager.getParser(clientConfig.getRespMsgType()).messageToBean(send, respClass);
+		String send = getRequestExecutor.execute(httpClient, newUrl, null);
+		
+		TokenMessage messageToBean = (TokenMessage)parserManager.getParser(clientConfig.getRespMsgType()).messageToBean(send, TokenMessage.class);
 		afterSend(messageToBean);
 		return messageToBean;
 	}

@@ -23,6 +23,17 @@ public class WxPayInMessage implements IMessage {
 	
 	@JSONField(name = "@JSONField")
 	private String openid;
+	
+	private String body;
+	
+	public String getBody() {
+		return body;
+	}
+
+	public void setBody(String body) {
+		this.body = body;
+	}
+
 	public String getFeeType() {
 		return feeType;
 	}

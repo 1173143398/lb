@@ -10,7 +10,6 @@ import com.http.GetRequestExecutor;
 import com.message.IMessage;
 import com.message.client.JsapiTicketMessage;
 import com.service.SystemConfigService;
-import com.util.ClassUtil;
 import com.util.TimeUtil;
 
 @Service("jsapiTicketMessageService")
@@ -22,14 +21,11 @@ public class JsapiTicketMessageService extends AbstractClientMessageService {
 	@Override
 	public IMessage doService(ClientConfig clientConfig, IMessage message) throws Exception{
 		String formatUrl = this.formatUrl(clientConfig.getUrl(), message);
-		Class<? extends IMessage> reqClass = ClassUtil.getClass(clientConfig.getReqClass(), IMessage.class);
-		String msg = parserManager.getParser(clientConfig.getReqMsgType()).beanToMessage(message, reqClass);
 		
 		GetRequestExecutor getRequestExecutor = new GetRequestExecutor();
-		String send = getRequestExecutor.execute(httpClient, formatUrl, msg);
+		String send = getRequestExecutor.execute(httpClient, formatUrl, null);
 		
-		Class<? extends IMessage> respClass = ClassUtil.getClass(clientConfig.getRespClass(), IMessage.class);
-		JsapiTicketMessage jsapiTicketMessage = (JsapiTicketMessage)parserManager.getParser(clientConfig.getRespMsgType()).messageToBean(send, respClass);
+		JsapiTicketMessage jsapiTicketMessage = (JsapiTicketMessage)parserManager.getParser(clientConfig.getRespMsgType()).messageToBean(send, JsapiTicketMessage.class);
 		if("0".equals(jsapiTicketMessage.getErrcode())){
 			SystemConfig systemConfig = TransactionContext.getSystemConfig();
 			systemConfig.setExpiresIn(jsapiTicketMessage.getExpiresIn());

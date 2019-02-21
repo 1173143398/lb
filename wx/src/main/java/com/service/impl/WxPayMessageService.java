@@ -20,7 +20,6 @@ import com.parse.impl.ParserManager;
 import com.service.OrderNoService;
 import com.service.WxPayService;
 import com.util.Constants;
-import com.util.TimeUtil;
 import com.wxpay.WXPay;
 
 @Service
@@ -58,23 +57,14 @@ public class WxPayMessageService implements WxPayService {
 	public WxPayOutMessage unifiedOrder(WxPayInMessage wxPayInMessage) {
 		try{
 		Map<String,String> reqData = new HashMap<String,String>();
-		reqData.put("device_info", "");
-		reqData.put("body", "微信支付-测试");
-		reqData.put("detail", "");
-		reqData.put("attach", "");
+		reqData.put("body", wxPayInMessage.getBody());
 		reqData.put("out_trade_no",orderNoService.getOrderNo());
 		reqData.put("fee_type", wxPayInMessage.getFeeType());
 		reqData.put("total_fee", wxPayInMessage.getTotalFee().toString());
 		reqData.put("spbill_create_ip", wxPayInMessage.getSpbillCreateIp());
-		reqData.put("time_start", TimeUtil.now());
-		reqData.put("time_expire", TimeUtil.time(20000));
-		reqData.put("goods_tag", "");
 		reqData.put("trade_type", wxPayInMessage.getTradeType());
 		reqData.put("product_id", wxPayInMessage.getProductId());
-		reqData.put("limit_pay", "");
 		reqData.put("openid", wxPayInMessage.getOpenid());
-		reqData.put("receipt", "");
-		reqData.put("scene_info", "");
 //		reqData.put("appid", value);
 //		reqData.put("mch_id", value);
 //		reqData.put("nonce_str", value);
