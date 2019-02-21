@@ -1,16 +1,16 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : conn
-Source Server Version : 50724
-Source Host           : 192.168.164.129:3306
+Source Server         : con
+Source Server Version : 50506
+Source Host           : localhost:3306
 Source Database       : wx
 
 Target Server Type    : MYSQL
-Target Server Version : 50724
+Target Server Version : 50506
 File Encoding         : 65001
 
-Date: 2019-02-19 22:10:17
+Date: 2019-02-21 15:11:37
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -43,6 +43,10 @@ INSERT INTO `client_config` VALUES ('00003', '创建菜单', 'HTTPS', 'https://a
 INSERT INTO `client_config` VALUES ('00004', '获取jsapi_ticket', 'HTTPS', 'https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=${accessToken}&type=jsapi', 'GET', 'com.message.client.DefaultClientMessage', 'JSON', 'com.message.client.JsapiTicketMessage', 'JSON', 'jsapiTicketMessageService');
 INSERT INTO `client_config` VALUES ('00005', '删除菜单', 'HTTPS', 'https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=${accessToken}', 'GET', 'com.message.client.DefaultClientMessage', 'JSON', 'com.message.client.DeleteMenuMessage', 'JSON', 'deleteMenuMessageService');
 INSERT INTO `client_config` VALUES ('00007', '获取微信支付沙箱signkey', '', '', '', 'com.message.client.SandboxSignKeyInMessage', 'JSON', 'com.message.client.SandboxSignKeyOutMessage', 'JSON', 'sandboxSignKeyService');
+INSERT INTO `client_config` VALUES ('00008', '刷新配置', null, null, null, null, null, null, null, 'refreshConfigMessageService');
+INSERT INTO `client_config` VALUES ('00009', '客服接口-发消息', 'HTTPS', 'https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=${accessToken}', 'POST', 'com.message.client.CustomSendMessage', 'JSON', null, null, 'customSendMessageService');
+INSERT INTO `client_config` VALUES ('00010', '客服输入状态', 'HTTPS', 'https://api.weixin.qq.com/cgi-bin/message/custom/typing?access_token=${accessToken}', 'POST', null, null, null, null, 'customTypingService');
+INSERT INTO `client_config` VALUES ('00011', '发送模板消息', 'HTTPS', 'https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=${accessToken}', 'POST', null, null, null, null, 'templateSendMessageService');
 
 -- ----------------------------
 -- Table structure for `server_config`
@@ -85,7 +89,7 @@ CREATE TABLE `system_config` (
 -- ----------------------------
 -- Records of system_config
 -- ----------------------------
-INSERT INTO `system_config` VALUES ('XML', 'wx91d49736e4bc722d', 'e3f93c71d0aaa303e268b85c7c2c3a4c', 'liangbo', '18_Qzu1RIXaVUdCmc0Sh_99IedXTV7Fy2XixAdxyoun1hoK6y2u1LdeBmR0E7udrV94IPo3yVYWWKAQ7vRWkUuu0z-DAFa6LM6rPYNS5kl6GdvdzEmtcLQOP89MThcwvrv_2bB1vJrtxpbnZv-XMEUbAGAASI', 'LIKLckvwlJT9cWIhEQTwfHFkbt0FVcbNLt8UimDxzsoaAkTAkRLO2gH6mLpZBZc-Tzib-eDQgRzQpjbGzmi1Yw', 'C', 'U48TF38rZ1Mrn1YBmN1iEyWyyQvhZ1oBGX1nbdCbRiS', null, '7200', '2019-02-19 15:14:19');
+INSERT INTO `system_config` VALUES ('XML', 'wx91d49736e4bc722d', 'e3f93c71d0aaa303e268b85c7c2c3a4c', 'liangbo', '18_NjS0jElKGqntWw2Von2vPupWemePV06lOFOepEkqkKZeIxoMYB1IM8ZdA5h425NQdasePr_uaG4TFaJRaraqNl7oQRsiQtNuwCSjPdcGoGBfRFydwzRDK4b7XWMAUbffI8EV0ovWMUievUzZRAXhADAVEB', 'LIKLckvwlJT9cWIhEQTwfHFkbt0FVcbNLt8UimDxzsrlanHH_YEJQoHXybx_kvzEuzI_m2jbObkqSrdiIFxRtA', 'C', 'U48TF38rZ1Mrn1YBmN1iEyWyyQvhZ1oBGX1nbdCbRiS', null, '7200', '2019-02-21 15:04:04');
 
 -- ----------------------------
 -- Table structure for `wx_pay_config`
@@ -108,4 +112,4 @@ CREATE TABLE `wx_pay_config` (
 -- ----------------------------
 -- Records of wx_pay_config
 -- ----------------------------
-INSERT INTO `wx_pay_config` VALUES ('wx426b3015555a46be', '7813490da6f1265e4901ffb80afaa36f', '1900009851', '8934e7d15453e97507ef794cf7b0519d', '9fdaddc81970990e040c04fa488349aa', null, 'api.mch.weixin.qq.com', 'true', 'http://u5qn9q.natappfree.cc/pay/receive', 'false', 'true');
+INSERT INTO `wx_pay_config` VALUES ('wx91d49736e4bc722d', '7813490da6f1265e4901ffb80afaa36f', '1225312702', '8934e7d15453e97507ef794cf7b0519d', '231b1b2b98734212fd816f11f2ee506d', null, 'api2.mch.weixin.qq.com', 'false', 'http://u5qn9q.natappfree.cc/pay/receive', 'false', 'true');
