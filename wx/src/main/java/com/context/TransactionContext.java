@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import com.config.SystemConfig;
 import com.config.WxPayConfig;
 import com.service.SystemConfigService;
-import com.service.WxPayConfigService;
 
 @Service
 public class TransactionContext implements ApplicationContextAware,InitializingBean{
@@ -24,9 +23,6 @@ public class TransactionContext implements ApplicationContextAware,InitializingB
 	@Autowired
 	private SystemConfigService systemConfigService;
 	
-	@Autowired
-	private WxPayConfigService wxPayConfigService;
-	
 	@Override
 	public void setApplicationContext(ApplicationContext ctx) throws BeansException {
 		applicationContext = ctx;
@@ -39,15 +35,22 @@ public class TransactionContext implements ApplicationContextAware,InitializingB
 	public static SystemConfig getSystemConfig(){
 		return systemConfig;
 	}
-
+	
+	public static void setSystemConfig(SystemConfig sysCfg){
+		systemConfig = sysCfg;
+	}
 	public static WxPayConfig getWxPayConfig(){
 		return wxPayConfig;
 	}
 	
+	public static void setWxPayConfig(WxPayConfig wxPayCfg){
+		wxPayConfig = wxPayCfg;
+	}
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		systemConfig = systemConfigService.getSystemConfig();
-		wxPayConfig = wxPayConfigService.getWxPayConfig();
+		TransactionContext.setSystemConfig(systemConfigService.getSystemConfig());
 	}
+	
 
 }

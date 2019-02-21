@@ -11,4 +11,6 @@ public class Constants {
 	public static String UPLOAD = "UPLOAD";
 	public static String DOWNLOAD = "DOWNLOAD";
 	
+	public static String JSON = "JSON";
+	
 }

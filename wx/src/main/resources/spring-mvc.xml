@@ -70,6 +70,7 @@ http://www.springframework.org/schema/tx/spring-tx-4.1.xsd">
 	
 	<mvc:resources mapping="/js/**" location="/WEB-INF/js/"></mvc:resources>
 	<mvc:resources mapping="/img/**" location="/WEB-INF/img/"></mvc:resources>
+	<mvc:resources mapping="/css/**" location="/WEB-INF/css/"></mvc:resources>
 	
 	<bean id="viewResolverJsp"
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">

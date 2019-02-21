@@ -7,7 +7,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.context.TransactionContext;
 import com.wxpay.WXPayConstants.SignType;
 
 @Component
@@ -15,10 +14,8 @@ public class WXPay implements InitializingBean{
 
 	@Autowired
     private WXPayConfig config;
+	
     private SignType signType;
-    private boolean autoReport;
-    private boolean useSandbox;
-    private String notifyUrl;
     private WXPayRequest wxPayRequest;
 
     public WXPay(){
@@ -52,9 +49,9 @@ public class WXPay implements InitializingBean{
 
     public WXPay(final WXPayConfig config, final String notifyUrl, final boolean autoReport, final boolean useSandbox) throws Exception {
         this.config = config;
-        this.notifyUrl = notifyUrl;
-        this.autoReport = autoReport;
-        this.useSandbox = useSandbox;
+//        this.notifyUrl = notifyUrl;
+//        this.autoReport = autoReport;
+//        this.useSandbox = useSandbox;
         if (useSandbox) {
             this.signType = SignType.MD5; // 沙箱环境
         }
@@ -108,7 +105,7 @@ public class WXPay implements InitializingBean{
         else if (SignType.HMACSHA256.equals(this.signType)) {
             reqData.put("sign_type", WXPayConstants.HMACSHA256);
         }
-        if(this.useSandbox){
+        if(this.config.getUseSandbox()){
         	reqData.put("sign", WXPayUtil.generateSignature(reqData, config.getSandboxSignkey(), this.signType));
         }else{
         	reqData.put("sign", WXPayUtil.generateSignature(reqData, config.getKey(), this.signType));
@@ -125,7 +122,7 @@ public class WXPay implements InitializingBean{
      */
     public boolean isResponseSignatureValid(Map<String, String> reqData) throws Exception {
         // 返回数据的签名方式和请求中给定的签名方式是一致的
-    	if(this.useSandbox){
+    	if(this.config.getUseSandbox()){
     		return WXPayUtil.isSignatureValid(reqData, this.config.getSandboxSignkey(), this.signType);
     	}else{
     		return WXPayUtil.isSignatureValid(reqData, this.config.getKey(), this.signType);
@@ -178,7 +175,7 @@ public class WXPay implements InitializingBean{
         String msgUUID = reqData.get("nonce_str");
         String reqBody = WXPayUtil.mapToXml(reqData);
 
-        String resp = this.wxPayRequest.requestWithoutCert(urlSuffix, msgUUID, reqBody, connectTimeoutMs, readTimeoutMs, autoReport);
+        String resp = this.wxPayRequest.requestWithoutCert(urlSuffix, msgUUID, reqBody, connectTimeoutMs, readTimeoutMs, this.config.getAutoReport());
         return resp;
     }
 
@@ -197,7 +194,7 @@ public class WXPay implements InitializingBean{
         String msgUUID= reqData.get("nonce_str");
         String reqBody = WXPayUtil.mapToXml(reqData);
 
-        String resp = this.wxPayRequest.requestWithCert(urlSuffix, msgUUID, reqBody, connectTimeoutMs, readTimeoutMs, this.autoReport);
+        String resp = this.wxPayRequest.requestWithCert(urlSuffix, msgUUID, reqBody, connectTimeoutMs, readTimeoutMs, this.config.getAutoReport());
         return resp;
     }
 
@@ -257,7 +254,7 @@ public class WXPay implements InitializingBean{
      */
     public Map<String, String> microPay(Map<String, String> reqData, int connectTimeoutMs, int readTimeoutMs) throws Exception {
         String url;
-        if (this.useSandbox) {
+        if (this.config.getUseSandbox()) {
             url = WXPayConstants.SANDBOX_MICROPAY_URL_SUFFIX;
         }
         else {
@@ -375,14 +372,14 @@ public class WXPay implements InitializingBean{
      */
     public Map<String, String> unifiedOrder(Map<String, String> reqData,  int connectTimeoutMs, int readTimeoutMs) throws Exception {
         String url;
-        if (this.useSandbox) {
+        if (this.config.getUseSandbox()) {
             url = WXPayConstants.SANDBOX_UNIFIEDORDER_URL_SUFFIX;
         }
         else {
             url = WXPayConstants.UNIFIEDORDER_URL_SUFFIX;
         }
-        if(this.notifyUrl != null) {
-            reqData.put("notify_url", this.notifyUrl);
+        if(this.config.getNotifyUrl() != null) {
+            reqData.put("notify_url", this.config.getNotifyUrl());
         }
         String respXml = this.requestWithoutCert(url, this.fillRequestData(reqData), connectTimeoutMs, readTimeoutMs);
         return this.processResponseXml(respXml);
@@ -412,7 +409,7 @@ public class WXPay implements InitializingBean{
      */
     public Map<String, String> orderQuery(Map<String, String> reqData, int connectTimeoutMs, int readTimeoutMs) throws Exception {
         String url;
-        if (this.useSandbox) {
+        if (this.config.getUseSandbox()) {
             url = WXPayConstants.SANDBOX_ORDERQUERY_URL_SUFFIX;
         }
         else {
@@ -447,7 +444,7 @@ public class WXPay implements InitializingBean{
      */
     public Map<String, String> reverse(Map<String, String> reqData, int connectTimeoutMs, int readTimeoutMs) throws Exception {
         String url;
-        if (this.useSandbox) {
+        if (this.config.getUseSandbox()) {
             url = WXPayConstants.SANDBOX_REVERSE_URL_SUFFIX;
         }
         else {
@@ -481,7 +478,7 @@ public class WXPay implements InitializingBean{
      */
     public Map<String, String> closeOrder(Map<String, String> reqData,  int connectTimeoutMs, int readTimeoutMs) throws Exception {
         String url;
-        if (this.useSandbox) {
+        if (this.config.getUseSandbox()) {
             url = WXPayConstants.SANDBOX_CLOSEORDER_URL_SUFFIX;
         }
         else {
@@ -516,7 +513,7 @@ public class WXPay implements InitializingBean{
      */
     public Map<String, String> refund(Map<String, String> reqData, int connectTimeoutMs, int readTimeoutMs) throws Exception {
         String url;
-        if (this.useSandbox) {
+        if (this.config.getUseSandbox()) {
             url = WXPayConstants.SANDBOX_REFUND_URL_SUFFIX;
         }
         else {
@@ -550,7 +547,7 @@ public class WXPay implements InitializingBean{
      */
     public Map<String, String> refundQuery(Map<String, String> reqData, int connectTimeoutMs, int readTimeoutMs) throws Exception {
         String url;
-        if (this.useSandbox) {
+        if (this.config.getUseSandbox()) {
             url = WXPayConstants.SANDBOX_REFUNDQUERY_URL_SUFFIX;
         }
         else {
@@ -586,7 +583,7 @@ public class WXPay implements InitializingBean{
      */
     public Map<String, String> downloadBill(Map<String, String> reqData, int connectTimeoutMs, int readTimeoutMs) throws Exception {
         String url;
-        if (this.useSandbox) {
+        if (this.config.getUseSandbox()) {
             url = WXPayConstants.SANDBOX_DOWNLOADBILL_URL_SUFFIX;
         }
         else {
@@ -632,7 +629,7 @@ public class WXPay implements InitializingBean{
      */
     public Map<String, String> report(Map<String, String> reqData, int connectTimeoutMs, int readTimeoutMs) throws Exception {
         String url;
-        if (this.useSandbox) {
+        if (this.config.getUseSandbox()) {
             url = WXPayConstants.SANDBOX_REPORT_URL_SUFFIX;
         }
         else {
@@ -664,7 +661,7 @@ public class WXPay implements InitializingBean{
      */
     public Map<String, String> shortUrl(Map<String, String> reqData, int connectTimeoutMs, int readTimeoutMs) throws Exception {
         String url;
-        if (this.useSandbox) {
+        if (this.config.getUseSandbox()) {
             url = WXPayConstants.SANDBOX_SHORTURL_URL_SUFFIX;
         }
         else {
@@ -698,7 +695,7 @@ public class WXPay implements InitializingBean{
      */
     public Map<String, String> authCodeToOpenid(Map<String, String> reqData, int connectTimeoutMs, int readTimeoutMs) throws Exception {
         String url;
-        if (this.useSandbox) {
+        if (this.config.getUseSandbox()) {
             url = WXPayConstants.SANDBOX_AUTHCODETOOPENID_URL_SUFFIX;
         }
         else {
@@ -710,13 +707,13 @@ public class WXPay implements InitializingBean{
 
     public Map<String, String> getSandboxSignkey(Map<String, String> reqData) throws Exception{
     	 String url;
-         if (this.useSandbox) {
+         if (this.config.getUseSandbox()) {
              url = WXPayConstants.SANDBOX_SIGN_KEY_URL_SUFFIX;
          }
          else {
              url = WXPayConstants.SANDBOX_SIGN_KEY_URL_SUFFIX;
          }
-         String sign = WXPayUtil.generateSignature(reqData, TransactionContext.getWxPayConfig().getKey());
+         String sign = WXPayUtil.generateSignature(reqData, this.config.getKey());
          reqData.put("sign", sign);
          String respXml = this.requestWithoutCert(url, reqData, this.config.getHttpConnectTimeoutMs(), this.config.getHttpReadTimeoutMs());
          return WXPayUtil.xmlToMap(respXml);
@@ -724,15 +721,22 @@ public class WXPay implements InitializingBean{
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		 this.notifyUrl = config.getNotifyUrl();
-		 this.autoReport = config.getAutoReport();
-		 this.useSandbox = config.getUseSandbox();
 		 this.wxPayRequest = new WXPayRequest(config);
-		 if (useSandbox) {
+		 if (config.getUseSandbox()) {
 	            this.signType = SignType.MD5; // 沙箱环境
 	        }
 	        else {
 	            this.signType = SignType.HMACSHA256;
 	        }
 	}
+	
+	public String jsapiSign(Map<String,String> reqData) throws Exception{
+		reqData.put("signType", this.signType.toString());
+		if(this.config.getUseSandbox()){
+			return  WXPayUtil.generateSignature(reqData, this.config.getSandboxSignkey());
+		}else{
+			return  WXPayUtil.generateSignature(reqData, this.config.getKey());
+		}
+	}
+	
 } // end class

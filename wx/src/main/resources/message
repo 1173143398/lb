@@ -6,7 +6,7 @@
 <Content>< ![CDATA[this is a test] ]></Content>  
 <MsgId>1234567890123456</MsgId>  
 </xml>
-
+     
 <xml> 
 <ToUserName>< ![CDATA[toUser] ]></ToUserName> 
 <FromUserName>< ![CDATA[fromUser] ]></FromUserName> 
@@ -41,7 +41,7 @@
 <MsgType>< ![CDATA[event] ]></MsgType>
 <Event>< ![CDATA[subscribe] ]></Event>
 </xml>
-==============
+==============  qqe
 123
 
 123445

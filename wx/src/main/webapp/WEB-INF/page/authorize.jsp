@@ -9,7 +9,7 @@
 <title>支付测试</title>
 </head>
 <body>
-<form name="payForm" action="${pageContext.request.contextPath}/pay">
+<form name="payForm" action="${pageContext.request.contextPath}/pay/jsapipay">
 	<div class="weui-cells weui-cells_form">
            <div class="weui-cell">
                <div class="weui-cell__hd"><label class="weui-label">feeType</label></div>
@@ -54,10 +54,12 @@
 </form>
 <script type="text/javascript">
 	window.onload = function(){
+		
 		document.getElementById('showTooltips').onclick = function(){
 			document.forms['payForm'].submit(); 
 		};
 	};
+	
 </script>
 </body>
 </html>

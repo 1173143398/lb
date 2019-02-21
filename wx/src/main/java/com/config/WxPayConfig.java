@@ -3,6 +3,7 @@ package com.config;
 public class WxPayConfig {
 
 	private String appId;
+	private String appSecret;
 	private String mchId;
 	private String key;
 	private String certPath;
@@ -17,6 +18,18 @@ public class WxPayConfig {
 	public String getAppId() {
 		return appId;
 	}
+	
+	
+	public String getAppSecret() {
+		return appSecret;
+	}
+
+
+	public void setAppSecret(String appSecret) {
+		this.appSecret = appSecret;
+	}
+
+
 	public void setAppId(String appId) {
 		this.appId = appId;
 	}

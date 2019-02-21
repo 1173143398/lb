@@ -21,7 +21,7 @@ public class ClientConfigDaoImpl implements ClientConfigDao{
 	public ClientConfig getClientConfig(String funcNo) {
 		return jdbcTemplate.queryForObject("SELECT FUNC_NO,FUNC_DESC,SHCEMA,URL,METHOD,REQ_CLASS,REQ_MSG_TYPE,"
 				+ "RESP_CLASS,RESP_MSG_TYPE,SERVICE_BEAN "
-				+ " FROM CLILENT_CONFIG WHERE FUNC_NO = ?", new RowMapper<ClientConfig>() {
+				+ " FROM CLIENT_CONFIG WHERE FUNC_NO = ?", new RowMapper<ClientConfig>() {
 
 			@Override
 			public ClientConfig mapRow(ResultSet rs, int rowNum) throws SQLException {

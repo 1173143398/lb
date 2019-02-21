@@ -12,6 +12,12 @@
 				    alert(data);
 				  });
 	});
+	$("#refreshConfig").bind("click",function(){
+		$.get("/wx/send",{"funcno":"00008"},
+				function(data){
+			alert(data);
+		});
+	});
 	
 	$("#createMenu").bind("click",function(){
 		$.ajax({
@@ -22,13 +28,13 @@
 					"button":[
 					          {    
 					               "type":"view",
-					               "name":"网页授权",
-					               "url":"http://u5qn9q.natappfree.cc/wx/authorize"
+					               "name":"pay",
+					               "url":"http://e5gasi.natappfree.cc/wx/pay"
 					           },
 					           {    
 					               "type":"view",
-					               "name":"网页测试",
-					               "url":"http://u5qn9q.natappfree.cc/wx/index"
+					               "name":"index",
+					               "url":"http://e5gasi.natappfree.cc/wx/index"
 					           }]
 				}),
 			  success: function(data){
@@ -48,7 +54,7 @@
 				  });
 	});
 	
-	$("#wxPay").bind("click",function(){
+	$("#getSandboxSignkey").bind("click",function(){
 		$.ajax({
 			  type: 'POST',
 			  url: "/wx/send?funcno=00007",

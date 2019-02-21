@@ -23,6 +23,17 @@ public class WxPayOutMessage implements IMessage {
 	@JSONField(name = "err_code_des")
 	private String errCodeDes;
 
+	@JSONField(name = "mweb_url")
+	private String mwebUrl;
+	
+	public String getMwebUrl() {
+		return mwebUrl;
+	}
+
+	public void setMwebUrl(String mwebUrl) {
+		this.mwebUrl = mwebUrl;
+	}
+
 	public String getReturnCode() {
 		return returnCode;
 	}

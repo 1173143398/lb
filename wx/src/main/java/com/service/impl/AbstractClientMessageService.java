@@ -48,4 +48,7 @@ public abstract class AbstractClientMessageService implements
 		IMessage respMsg = this.doService(clientConfig, reqMsg);
 		return respParser.beanToMessage(respMsg, respClass);
 	}
+	
+	protected abstract IMessage doService(ClientConfig clientConfig,IMessage message);
+	
 }
