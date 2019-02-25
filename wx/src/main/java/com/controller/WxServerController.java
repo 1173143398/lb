@@ -55,7 +55,7 @@ public class WxServerController {
 		return "";
 	}
 	
-	@RequestMapping(value = "/receive",method = RequestMethod.POST,produces="application/json; charset=utf-8")
+	@RequestMapping(value = "/receive",method = RequestMethod.POST)
 	@ResponseBody
 	public String receive(@RequestBody String message,
 			@RequestParam(value = "signature",required = false) String signature,

@@ -44,6 +44,9 @@ public class SecurityServiceImpl implements SecurityService {
 	
 	@Override
 	public boolean checkSign(String signature, String timestamp, String nonce) {
+		if(StringUtil.isNull(signature) || StringUtil.isNull(timestamp) || StringUtil.isNull(nonce)){
+			return false;
+		}
 		String sortStr = sort(TransactionContext.getSystemConfig().getToken(), timestamp, nonce);
 		String mySignature = shal(sortStr);
 		if (!"".equals(signature) && !"".equals(mySignature)
